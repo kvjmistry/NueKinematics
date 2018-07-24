@@ -229,8 +229,8 @@ void NueKinematics::analyze(art::Event const & e) {
   for(auto particlePtr = particleHandle->begin(); particlePtr != particleHandle->end(); ++particlePtr) { // Loop over PDG particles in the event
 	  const simb::MCParticle& particle = (*particlePtr); // De-reference the particle pointer
 
-    double Theta =  Calc_Theta{ particle.Pz(), particle.P()  };                          // Calculate Theta
-    //double Phi   =  Calc_Phi{   particle.Momentum(0).Px(), particle.Momentum(0).Py(),  particle.Momentum(0).P()  }; // Calculate Phi
+    Theta =  Calc_Theta( particle.Pz(), particle.P()  );                 // Calculate Theta
+    Phi   =  Calc_Phi(   particle.Px(), particle.Py(),  particle.P()  ); // Calculate Phi
     
 
     ParticleE = particle.Momentum(0).E() ;
@@ -239,28 +239,59 @@ void NueKinematics::analyze(art::Event const & e) {
 		if (particle.PdgCode() == 12){ // nue in the event
       
       // Fill a histogram with the pdg code, energy, theta, phi
-      hNue_Energy_All ->Fill( ParticleE );
-      hNue_Energy     ->Fill( ParticleE );
-
+      hNue_Energy_All             ->Fill( ParticleE );
+      hNue_Theta_All              ->Fill(Theta); 
+      hNue_Phi_All                ->Fill(Phi); 
+      hNue_E_vs_Theta_All         ->Fill(ParticleE, Theta);
+      hNue_E_vs_Phi_All           ->Fill(ParticleE, Phi);
+      
+      hNue_Energy ->Fill( ParticleE );
+      hNue_Theta  ->Fill(Theta); 
+      hNue_Phi    ->Fill(Phi);
       
     } 
     else if (particle.PdgCode() == -12){ // nue bar in the event
-      
-      // Fill a histogram with the pdg code, energy, theta, phi
-      hNue_Energy_All ->Fill( ParticleE );
-      hNue_bar_Energy ->Fill( ParticleE );
 
+      // Fill a histogram with the pdg code, energy, theta, phi
+      hNue_Energy_All       ->Fill( ParticleE );
+      hNue_Theta_All        ->Fill( Theta ); 
+      hNue_Phi_All          ->Fill( Phi ); 
+      hNue_E_vs_Theta_All   ->Fill( ParticleE, Theta );
+      hNue_E_vs_Phi_All     ->Fill( ParticleE, Phi );
+
+
+      hNue_bar_Energy ->Fill( ParticleE );
+      hNue_bar_Theta  ->Fill( Theta ); 
+      hNue_bar_Phi    ->Fill( Phi );
     } 
     else if (particle.PdgCode() == 11){ // e- in the event
+
       // Fill a histogram with the pdg code, energy, theta, phi
-      helectron_Energy_All ->Fill( ParticleE );
+      helectron_Energy_All     ->Fill( ParticleE );
+      helectron_Theta_All      ->Fill( Theta );
+      helectron_Phi_All        ->Fill( Phi );
+      helectron_E_vs_Theta_All ->Fill( ParticleE, Theta );
+      helectron_E_vs_Phi_All   ->Fill( ParticleE, Phi );
+
+
       heminus_Energy   ->Fill( ParticleE );
+      heminus_Theta    ->Fill( Theta );
+      heminus_Phi      ->Fill( Phi );
 
     } 
     else if (particle.PdgCode() == -11){ // e+ in the event
+
       // Fill a histogram with the pdg code, energy, theta, phi
-      helectron_Energy_All ->Fill( ParticleE );
-      heplus_Energy        ->Fill( ParticleE );
+      helectron_Energy_All     ->Fill( ParticleE );
+      helectron_Theta_All      ->Fill( Theta );
+      helectron_Phi_All        ->Fill( Phi );
+      helectron_E_vs_Theta_All ->Fill( ParticleE, Theta );
+      helectron_E_vs_Phi_All   ->Fill( ParticleE, Phi );
+
+
+      heplus_Energy   ->Fill( ParticleE );
+      heplus_Theta    ->Fill( Theta );
+      heplus_Phi      ->Fill( Phi );
 
     }// END IF CONDITION BLOCK
 
