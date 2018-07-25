@@ -39,51 +39,42 @@ source:
 # Define and configure some modules to do work on each event.
 # First modules are defined; they are scheduled later.
 # Modules are grouped by type.
-physics:
-{
+physics: {
+  ### Here you will define any producer modules you want to run ###
+  producers:{}
  
- ### Here you will define any producer modules you want to run ###
- producers:
- {
-  ### random number saver
-  #rns:                 { module_type: RandomNumberSaver }
-
- }
+  ### Here you will define any analyzer modules you want to run ###
+  analyzers: {
+    microboonewvtof:{
+      module_type:  "NueKinematics"
+      GeantModule: "largeant"		
+      HitLabel: "gaushit" 
+      MCTruthProduct: "generator" 
+    }
+  }  
  
- ### Here you will define any analyzer modules you want to run ###
- analyzers:
- {
-	microboonewvtof:
-        {
-              module_type:  "NueKinematics"
-              GeantModule: "largeant"		# don't change this from 'largeant'
-              HitLabel: ["gaushit"]
-       }
+  ### Here you will define any filter modules you want to run ###
+  filters: {}
 
- }
- 
- ### Here you will define any filter modules you want to run ###
- filters: {}
+  #define the producer and filter modules for this path, order matters, 
+  #filters reject all following items.  see lines starting physics.producers below
+  
+  reco: [  ]
+  
+  ana:[microboonewvtof]
+  
+  filt:[]
 
- #define the producer and filter modules for this path, order matters, 
- #filters reject all following items.  see lines starting physics.producers below
- 
- reco: [  ]
- 
- ana:[microboonewvtof]
- 
- filt:[]
+  #define the output stream, there could be more than one if using filters 
+  stream1:  [  ]
 
- #define the output stream, there could be more than one if using filters 
- stream1:  [  ]
+  #trigger_paths is a keyword and contains the paths that modify the art::event, 
+  #ie filters and producers
+  trigger_paths: [] 
 
- #trigger_paths is a keyword and contains the paths that modify the art::event, 
- #ie filters and producers
- trigger_paths: [] 
-
- #end_paths is a keyword and contains the paths that do not modify the art::Event, 
- #ie analyzers and output streams.  these all run simultaneously
- end_paths:     [ana, stream1]  
+  #end_paths is a keyword and contains the paths that do not modify the art::Event, 
+  #ie analyzers and output streams.  these all run simultaneously
+  end_paths:     [ana, stream1]  
 }
 
 #block to define where the output goes.  if you defined a filter in the physics

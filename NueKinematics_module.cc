@@ -33,6 +33,7 @@
 #include "nutools/ParticleNavigation/ParticleList.h" 
 #include "nutools/ParticleNavigation/EmEveIdCalculator.h" 
 #include "larcoreobj/SimpleTypesAndConstants/geo_types.h" 
+#include "nusimdata/SimulationBase/MCTruth.h"
 
 //#include "nusimdata/SimulationBase/MCTrajectory.h" // for MCtrajectroy
 //#include "lardata/DetectorInfo/DetectorPropertiesStandard.h"          // Commented out as causing a error when building//#include "larreco/Calorimetry/CalorimetryAlg.h" 			               
@@ -40,7 +41,6 @@
 //#include "larevt/CalibrationDBI/Interface/ElectronLifetimeService.h"    // For dEdx conversion
 //#include "larevt/CalibrationDBI/Interface/ElectronLifetimeProvider.h"   // For dEdx conversion
 //#include "larreco/Calorimetry/CalorimetryAlg.h" 
-
 
 // ROOT includes
 #include "TH1.h" 
@@ -64,6 +64,7 @@
 #include <algorithm>
 
 #define PI 3.14159265
+
 
 
 class NueKinematics;
@@ -95,6 +96,7 @@ private:
 
   // Declare member data here.
   std::string fSimulationProducerLabel;			// The name of the producer that tracked simulated particles through the detector
+  std::string fMCTruth_label; 
 
   // Histograms
   // Nue all
@@ -128,10 +130,12 @@ private:
 	TH1D*	  heminus_Theta;		 
 	TH1D* 	heminus_Phi;	
 
-    // EPlus
+  // EPlus
   TH1D* 	heplus_Energy;	
 	TH1D*	  heplus_Theta;		 
 	TH1D* 	heplus_Phi;	
+
+  int NC_event{0};
 
 };
 
@@ -139,6 +143,8 @@ private:
 NueKinematics::NueKinematics(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
    // More initializers here.
   fSimulationProducerLabel = p.get< std::string >("GeantModule");
+  fMCTruth_label = p.get<std::string>("MCTruthProduct", "generator");
+  
 }
 
 
@@ -172,21 +178,21 @@ void NueKinematics::beginJob() {
   art::TFileDirectory Nue_dir     = tfs->mkdir( "Nue_dir"     );
   art::TFileDirectory Nue_bar_dir = tfs->mkdir( "Nue_bar_dir" );
 
-  art::TFileDirectory el_All_dir = tfs->mkdir( "Nue_All_dir" );
+  art::TFileDirectory el_All_dir = tfs->mkdir( "el_All_dir" );
   art::TFileDirectory eMinus_dir = tfs->mkdir( "eMinus_dir"  );
   art::TFileDirectory ePlus_dir  = tfs->mkdir( "ePlus_dir"   );
 
   // Histograms 
 
   // Nue All
-  hNue_E_vs_Theta_All = Nue_All_dir.make<TH2D>("hNue_E_vs_Theta_All","hNue_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",10., 0., 5. , 10., 0., 180);
-  hNue_E_vs_Phi_All   = Nue_All_dir.make<TH2D>("hNue_E_vs_Phi_All","hNue_E_vs_Phi_All; Energy [GeV]; Phi [degrees]",10., 0., 5. , 10., -180., 180);
+  hNue_E_vs_Theta_All = Nue_All_dir.make<TH2D>("Nue_E_vs_Theta_All","Nue_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",10., 0., 5. , 10., 0., 180);
+  hNue_E_vs_Phi_All   = Nue_All_dir.make<TH2D>("Nue_E_vs_Phi_All","Nue_E_vs_Phi_All; Energy [GeV]; Phi [degrees]",10., 0., 5. , 10., -180., 180);
   hNue_E_vs_Theta_All ->SetOption("COLZ,TEXT");
   hNue_E_vs_Phi_All   ->SetOption("COLZ,TEXT");
   
   hNue_Energy_All = Nue_All_dir.make<TH1D>("Nue_Energy_All","Nue_Energy_All; E [GeV]; Events",10., 0., 5);
   hNue_Theta_All  = Nue_All_dir.make<TH1D>("Nue_Theta_All","Nue_Theta_All; Theta [Degrees]; Events", 10., 0., 180);
-  hNue_Phi_All    = Nue_All_dir.make<TH1D>("Nue_Phi_All","Nue_Phi_All; Theta [Degrees]; Events", 10., -180., 180);
+  hNue_Phi_All    = Nue_All_dir.make<TH1D>("Nue_Phi_All","Nue_Phi_All; Phi [Degrees]; Events", 10., -180., 180);
   hNue_Energy_All ->SetOption("HIST,TEXT00");
   hNue_Theta_All  ->SetOption("HIST,TEXT00");
   hNue_Phi_All    ->SetOption("HIST,TEXT00");
@@ -194,7 +200,7 @@ void NueKinematics::beginJob() {
   // Nue
   hNue_Energy = Nue_dir.make<TH1D>("Nue_Energy","Nue_Energy; E [GeV]; Events",10., 0., 5.);
   hNue_Theta  = Nue_dir.make<TH1D>("Nue_Theta","Nue_Theta; Theta [Degrees]; Events", 10., 0., 180);
-  hNue_Phi    = Nue_dir.make<TH1D>("Nue_Phi","Nue_Phi; Theta [Degrees]; Events", 10., -180., 180);
+  hNue_Phi    = Nue_dir.make<TH1D>("Nue_Phi","Nue_Phi; Phi [Degrees]; Events", 10., -180., 180);
   hNue_Energy ->SetOption("HIST,TEXT00");
   hNue_Theta  ->SetOption("HIST,TEXT00");
   hNue_Phi    ->SetOption("HIST,TEXT00");
@@ -202,20 +208,20 @@ void NueKinematics::beginJob() {
   // Nue bar
   hNue_bar_Energy = Nue_bar_dir.make<TH1D>("Nue_bar_Energy","Nue_bar_Energy; E [GeV]; Events",10., 0., 5.);
   hNue_bar_Theta  = Nue_bar_dir.make<TH1D>("Nue_bar_Theta","Nue_bar_Theta; Theta [Degrees]; Events", 10., 0., 180);
-  hNue_bar_Phi    = Nue_bar_dir.make<TH1D>("Nue_bar_Phi","Nue_bar_Phi; Theta [Degrees]; Events", 10., -180., 180);
+  hNue_bar_Phi    = Nue_bar_dir.make<TH1D>("Nue_bar_Phi","Nue_bar_Phi; Phi [Degrees]; Events", 10., -180., 180);
   hNue_bar_Energy ->SetOption("HIST,TEXT00");
   hNue_bar_Theta  ->SetOption("HIST,TEXT00");
   hNue_bar_Phi    ->SetOption("HIST,TEXT00");  
 
   // Electron all
-  helectron_E_vs_Theta_All = el_All_dir.make<TH2D>("helectron_E_vs_Theta_All","helectron_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",10., 0., 5. , 10., 0., 180);
-  helectron_E_vs_Phi_All   = el_All_dir.make<TH2D>("helectron_E_vs_Phi_All","helectron_E_vs_Phi_All; Energy [GeV]; Phi [degrees]",10., 0., 5. , 10., -180., 180);
+  helectron_E_vs_Theta_All = el_All_dir.make<TH2D>("electron_E_vs_Theta_All","electron_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",10., 0., 5. , 10., 0., 180);
+  helectron_E_vs_Phi_All   = el_All_dir.make<TH2D>("electron_E_vs_Phi_All","electron_E_vs_Phi_All; Energy [GeV]; Phi [degrees]",10., 0., 5. , 10., -180., 180);
   helectron_E_vs_Theta_All->SetOption("COLZ,TEXT");
   helectron_E_vs_Phi_All->SetOption("COLZ,TEXT");
   
   helectron_Energy_All = el_All_dir.make<TH1D>("electron_Energy_All","electron_Energy_All; E [GeV]; Events",10., 0., 5.);
   helectron_Theta_All  = el_All_dir.make<TH1D>("electron_Theta_All","electron_Theta_All; Theta [Degrees]; Events", 10., 0., 180);
-  helectron_Phi_All    = el_All_dir.make<TH1D>("electron_Phi_All","electron_Phi_All; Theta [Degrees]; Events", 10., -180., 180);
+  helectron_Phi_All    = el_All_dir.make<TH1D>("electron_Phi_All","electron_Phi_All; Phi [Degrees]; Events", 10., -180., 180);
   helectron_Energy_All  ->SetOption("HIST,TEXT00");
   helectron_Theta_All   ->SetOption("HIST,TEXT00");
   helectron_Phi_All     ->SetOption("HIST,TEXT00");
@@ -223,7 +229,7 @@ void NueKinematics::beginJob() {
   // Eminus
   heminus_Energy = eMinus_dir.make<TH1D>("eminus_Energy","eminus_Energy; E [GeV]; Events",10., 0., 5.);
   heminus_Theta  = eMinus_dir.make<TH1D>("eminus_Theta","eminus_Theta; Theta [Degrees]; Events", 10., 0., 180);
-  heminus_Phi    = eMinus_dir.make<TH1D>("eminus_Phi","eminus_Phi; Theta [Degrees]; Events", 10., -180., 180);
+  heminus_Phi    = eMinus_dir.make<TH1D>("eminus_Phi","eminus_Phi; Phi [Degrees]; Events", 10., -180., 180);
   heminus_Energy ->SetOption("HIST,TEXT00");
   heminus_Theta ->SetOption("HIST,TEXT00");
   heminus_Phi   ->SetOption("HIST,TEXT00");
@@ -231,7 +237,7 @@ void NueKinematics::beginJob() {
   // EPlus
   heplus_Energy = ePlus_dir.make<TH1D>("eplus_Energy","eplus_Energy; E [GeV]; Events",10., 0., 5.);
   heplus_Theta  = ePlus_dir.make<TH1D>("eplus_Theta","eplus_Theta; Theta [Degrees]; Events", 10., 0., 180);
-  heplus_Phi    = ePlus_dir.make<TH1D>("eplus_Phi","eplus_Phi; Theta [Degrees]; Events", 10., -180., 180);
+  heplus_Phi    = ePlus_dir.make<TH1D>("eplus_Phi","eplus_Phi; Phi [Degrees]; Events", 10., -180., 180);
   heplus_Energy->SetOption("HIST,TEXT00");
   heplus_Theta->SetOption("HIST,TEXT00");
   heplus_Phi->SetOption("HIST,TEXT00");
@@ -240,87 +246,99 @@ void NueKinematics::beginJob() {
 void NueKinematics::analyze(art::Event const & e) {
   // Implementation of required member function here.
 	
-	// Create vector of particles involved in event
-	art::Handle <std::vector <simb::MCParticle>> particleHandle;
-	e.getByLabel(fSimulationProducerLabel, particleHandle);
-	
   double ParticleE{ 0. };
   double Theta{ 0. }; 
   double Phi{ 0. }; 
+  NC_event = 0; // reset NC counter
 
-  for(auto particlePtr = particleHandle->begin(); particlePtr != particleHandle->end(); ++particlePtr) { // Loop over PDG particles in the event
-	  const simb::MCParticle& particle = (*particlePtr); // De-reference the particle pointer
+  // create vector of GENIE MCTruth involved in event
+	art::Handle< std::vector<simb::MCTruth> > mctruthListHandle;
+  std::vector<art::Ptr<simb::MCTruth> > mclist;
+  
+  if (e.getByLabel("generator",mctruthListHandle)) art::fill_ptr_vector(mclist, mctruthListHandle);
+
+  int iList{ 0 }; // 1 nu int per spill
+
+  for (int p = 0; p < mclist[iList]->NParticles(); p++) { // Loop over GENIE MCTruth Particles
+
+    if (mclist[iList]->GetNeutrino().CCNC() == 1) NC_event ++; // The event was NC and we dont want to include the additional scattered neutrino
+
+    simb::MCParticle particle{mclist[iList]->GetParticle(p)}; // Get a MC Particle
 
     Theta =  Calc_Theta( particle.Pz(), particle.P()  );                 // Calculate Theta
     Phi   =  Calc_Phi(   particle.Px(), particle.Py(),  particle.P()  ); // Calculate Phi
+    ParticleE = particle.E() ;                                           // Energy
+
+    if ( NC_event >= 2 ) continue;// Skip fill for the second neutrino if NC
+
+    if (mclist[iList]->Origin() == simb::kBeamNeutrino){ // Require a beam neutrino
+      //DEBUG: std::cout << "PDG:\t"<< particle.PdgCode()<< std::endl;
+      
+      // BEGIN SELECTING PARTICLE BLOCK
+      if (particle.PdgCode() == 12){ // nue in the event
+        
+        // Fill a histogram with the pdg code, energy, theta, phi
+        hNue_Energy_All             ->Fill( ParticleE );
+        hNue_Theta_All              ->Fill(Theta); 
+        hNue_Phi_All                ->Fill(Phi); 
+        hNue_E_vs_Theta_All         ->Fill(ParticleE, Theta);
+        hNue_E_vs_Phi_All           ->Fill(ParticleE, Phi);
+        
+        hNue_Energy ->Fill( ParticleE );
+        hNue_Theta  ->Fill(Theta); 
+        hNue_Phi    ->Fill(Phi);
+        
+      } 
+      else if (particle.PdgCode() == -12){ // nue bar in the event
+
+        // Fill a histogram with the pdg code, energy, theta, phi
+        hNue_Energy_All       ->Fill( ParticleE );
+        hNue_Theta_All        ->Fill( Theta ); 
+        hNue_Phi_All          ->Fill( Phi ); 
+        hNue_E_vs_Theta_All   ->Fill( ParticleE, Theta );
+        hNue_E_vs_Phi_All     ->Fill( ParticleE, Phi );
+
+
+        hNue_bar_Energy ->Fill( ParticleE );
+        hNue_bar_Theta  ->Fill( Theta ); 
+        hNue_bar_Phi    ->Fill( Phi );
+      } 
+      else if (particle.PdgCode() == 11){ // e- in the event
+
+        // Fill a histogram with the pdg code, energy, theta, phi
+        helectron_Energy_All     ->Fill( ParticleE );
+        helectron_Theta_All      ->Fill( Theta );
+        helectron_Phi_All        ->Fill( Phi );
+        helectron_E_vs_Theta_All ->Fill( ParticleE, Theta );
+        helectron_E_vs_Phi_All   ->Fill( ParticleE, Phi );
+
+
+        heminus_Energy   ->Fill( ParticleE );
+        heminus_Theta    ->Fill( Theta );
+        heminus_Phi      ->Fill( Phi );
+
+      } 
+      else if (particle.PdgCode() == -11){ // e+ in the event
+
+        // Fill a histogram with the pdg code, energy, theta, phi
+        helectron_Energy_All     ->Fill( ParticleE );
+        helectron_Theta_All      ->Fill( Theta );
+        helectron_Phi_All        ->Fill( Phi );
+        helectron_E_vs_Theta_All ->Fill( ParticleE, Theta );
+        helectron_E_vs_Phi_All   ->Fill( ParticleE, Phi );
+
+
+        heplus_Energy   ->Fill( ParticleE );
+        heplus_Theta    ->Fill( Theta );
+        heplus_Phi      ->Fill( Phi );
+
+      }// END IF CONDITION BLOCK  
     
+    }// END if a beam neutrino
 
-    ParticleE = particle.Momentum(0).E() ;
-
-    // BEGIN SELECTING PARTICLE BLOCK
-		if (particle.PdgCode() == 12){ // nue in the event
-      
-      // Fill a histogram with the pdg code, energy, theta, phi
-      hNue_Energy_All             ->Fill( ParticleE );
-      hNue_Theta_All              ->Fill(Theta); 
-      hNue_Phi_All                ->Fill(Phi); 
-      hNue_E_vs_Theta_All         ->Fill(ParticleE, Theta);
-      hNue_E_vs_Phi_All           ->Fill(ParticleE, Phi);
-      
-      hNue_Energy ->Fill( ParticleE );
-      hNue_Theta  ->Fill(Theta); 
-      hNue_Phi    ->Fill(Phi);
-      
-    } 
-    else if (particle.PdgCode() == -12){ // nue bar in the event
-
-      // Fill a histogram with the pdg code, energy, theta, phi
-      hNue_Energy_All       ->Fill( ParticleE );
-      hNue_Theta_All        ->Fill( Theta ); 
-      hNue_Phi_All          ->Fill( Phi ); 
-      hNue_E_vs_Theta_All   ->Fill( ParticleE, Theta );
-      hNue_E_vs_Phi_All     ->Fill( ParticleE, Phi );
-
-
-      hNue_bar_Energy ->Fill( ParticleE );
-      hNue_bar_Theta  ->Fill( Theta ); 
-      hNue_bar_Phi    ->Fill( Phi );
-    } 
-    else if (particle.PdgCode() == 11){ // e- in the event
-
-      // Fill a histogram with the pdg code, energy, theta, phi
-      helectron_Energy_All     ->Fill( ParticleE );
-      helectron_Theta_All      ->Fill( Theta );
-      helectron_Phi_All        ->Fill( Phi );
-      helectron_E_vs_Theta_All ->Fill( ParticleE, Theta );
-      helectron_E_vs_Phi_All   ->Fill( ParticleE, Phi );
-
-
-      heminus_Energy   ->Fill( ParticleE );
-      heminus_Theta    ->Fill( Theta );
-      heminus_Phi      ->Fill( Phi );
-
-    } 
-    else if (particle.PdgCode() == -11){ // e+ in the event
-
-      // Fill a histogram with the pdg code, energy, theta, phi
-      helectron_Energy_All     ->Fill( ParticleE );
-      helectron_Theta_All      ->Fill( Theta );
-      helectron_Phi_All        ->Fill( Phi );
-      helectron_E_vs_Theta_All ->Fill( ParticleE, Theta );
-      helectron_E_vs_Phi_All   ->Fill( ParticleE, Phi );
-
-
-      heplus_Energy   ->Fill( ParticleE );
-      heplus_Theta    ->Fill( Theta );
-      heplus_Phi      ->Fill( Phi );
-
-    }// END IF CONDITION BLOCK
-
-
-	} // End loop over PDG particles in the event
-
+  }// END loop over mclist
 }
+
 
 
 void NueKinematics::endJob() {
