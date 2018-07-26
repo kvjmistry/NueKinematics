@@ -199,7 +199,7 @@ void NueKinematics::beginJob() {
 
   // Nue
   hNue_Energy = Nue_dir.make<TH1D>("Nue_Energy","Nue_Energy; E [GeV]; Events",10., 0., 5.);
-  hNue_Theta  = Nue_dir.make<TH1D>("Nue_Theta","Nue_Theta; Theta [Degrees]; Events", 10., 0., 180);
+  hNue_Theta  = Nue_dir.make<TH1D>("Nue_Theta","Nue_Theta; Theta [Degrees]; Events", 50., 0., 180);
   hNue_Phi    = Nue_dir.make<TH1D>("Nue_Phi","Nue_Phi; Phi [Degrees]; Events", 10., -180., 180);
   hNue_Energy ->SetOption("HIST,TEXT00");
   hNue_Theta  ->SetOption("HIST,TEXT00");
@@ -214,8 +214,8 @@ void NueKinematics::beginJob() {
   hNue_bar_Phi    ->SetOption("HIST,TEXT00");  
 
   // Electron all
-  helectron_E_vs_Theta_All = el_All_dir.make<TH2D>("electron_E_vs_Theta_All","electron_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",10., 0., 5. , 10., 0., 180);
-  helectron_E_vs_Phi_All   = el_All_dir.make<TH2D>("electron_E_vs_Phi_All","electron_E_vs_Phi_All; Energy [GeV]; Phi [degrees]",10., 0., 5. , 10., -180., 180);
+  helectron_E_vs_Theta_All = el_All_dir.make<TH2D>("electron_E_vs_Theta_All","electron_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",20., 0., 10. , 10., 0., 180);
+  helectron_E_vs_Phi_All   = el_All_dir.make<TH2D>("electron_E_vs_Phi_All","electron_E_vs_Phi_All; Energy [GeV]; Phi [degrees]",20., 0., 10. , 10., -180., 180);
   helectron_E_vs_Theta_All->SetOption("COLZ,TEXT");
   helectron_E_vs_Phi_All->SetOption("COLZ,TEXT");
   
@@ -245,6 +245,8 @@ void NueKinematics::beginJob() {
 
 void NueKinematics::analyze(art::Event const & e) {
   // Implementation of required member function here.
+
+  std::cout << "Running over Event:\t" << e.event() << std::endl;
 	
   double ParticleE{ 0. };
   double Theta{ 0. }; 
