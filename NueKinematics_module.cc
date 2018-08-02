@@ -130,7 +130,7 @@ private:
   int NC_event{0};
 
   // Add Ttree variables 
-  TTree *DataTree
+  TTree *DataTree;
   int run, subrun, evt;
   double NueEnergy; //,      NueTheta,      NuePhi;
   //double ElectronEnergy, ElectronTheta, ElectronPhi;
