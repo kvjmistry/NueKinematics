@@ -132,7 +132,7 @@ private:
   // Add Ttree variables 
   TTree *DataTree;
   int run, subrun, evt;
-  double NueEnergy       NueTheta,      NuePhi;
+  double NueEnergy,       NueTheta,      NuePhi;
   double ElectronEnergy, ElectronTheta, ElectronPhi;
   int PDG; 
 
