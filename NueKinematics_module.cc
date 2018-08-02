@@ -23,9 +23,7 @@
 #include "art/Framework/Services/Optional/TFileService.h"
 
 // LARSOFT includes
-//#include "lardataobj/Simulation/SimChannel.h" 
 #include "lardataobj/Simulation/SimPhotons.h" 
-//#include "lardataobj/Simulation/AuxDetSimChannel.h" 
 #include "lardata/DetectorInfoServices/DetectorPropertiesService.h" 
 #include "larsim/Simulation/LArG4Parameters.h"                          
 #include "larcore/Geometry/Geometry.h" 
@@ -35,12 +33,6 @@
 #include "larcoreobj/SimpleTypesAndConstants/geo_types.h" 
 #include "nusimdata/SimulationBase/MCTruth.h"
 
-//#include "nusimdata/SimulationBase/MCTrajectory.h" // for MCtrajectroy
-//#include "lardata/DetectorInfo/DetectorPropertiesStandard.h"          // Commented out as causing a error when building//#include "larreco/Calorimetry/CalorimetryAlg.h" 			               
-//#include "larreco/RecoAlg/ClusterRecoUtil/ClusterParamsAlg.h"		      // for cluster params alg function 
-//#include "larevt/CalibrationDBI/Interface/ElectronLifetimeService.h"    // For dEdx conversion
-//#include "larevt/CalibrationDBI/Interface/ElectronLifetimeProvider.h"   // For dEdx conversion
-//#include "larreco/Calorimetry/CalorimetryAlg.h" 
 
 // ROOT includes
 #include "TH1.h" 
@@ -185,28 +177,28 @@ void NueKinematics::beginJob() {
   // Histograms 
 
   // Nue All
-  hNue_E_vs_Theta_All = Nue_All_dir.make<TH2D>("Nue_E_vs_Theta_All","Nue_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",10., 0., 5. , 10., 0., 180);
-  hNue_E_vs_Phi_All   = Nue_All_dir.make<TH2D>("Nue_E_vs_Phi_All","Nue_E_vs_Phi_All; Energy [GeV]; Phi [degrees]",10., 0., 5. , 10., -180., 180);
+  hNue_E_vs_Theta_All = Nue_All_dir.make<TH2D>("Nue_E_vs_Theta_All","Nue_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",15., 0., 7. , 10., 0., 180);
+  hNue_E_vs_Phi_All   = Nue_All_dir.make<TH2D>("Nue_E_vs_Phi_All","Nue_E_vs_Phi_All; Energy [GeV]; Phi [degrees]",10., 0., 10. , 10., -180., 180);
   hNue_E_vs_Theta_All ->SetOption("COLZ,TEXT");
   hNue_E_vs_Phi_All   ->SetOption("COLZ,TEXT");
   
-  hNue_Energy_All = Nue_All_dir.make<TH1D>("Nue_Energy_All","Nue_Energy_All; E [GeV]; Events",10., 0., 5);
-  hNue_Theta_All  = Nue_All_dir.make<TH1D>("Nue_Theta_All","Nue_Theta_All; Theta [Degrees]; Events", 10., 0., 180);
+  hNue_Energy_All = Nue_All_dir.make<TH1D>("Nue_Energy_All","Nue_Energy_All; E [GeV]; Events",50., 0., 5);
+  hNue_Theta_All  = Nue_All_dir.make<TH1D>("Nue_Theta_All","Nue_Theta_All; Theta [Degrees]; Events", 100., 0., 180);
   hNue_Phi_All    = Nue_All_dir.make<TH1D>("Nue_Phi_All","Nue_Phi_All; Phi [Degrees]; Events", 10., -180., 180);
   hNue_Energy_All ->SetOption("HIST,TEXT00");
   hNue_Theta_All  ->SetOption("HIST,TEXT00");
   hNue_Phi_All    ->SetOption("HIST,TEXT00");
 
   // Nue
-  hNue_Energy = Nue_dir.make<TH1D>("Nue_Energy","Nue_Energy; E [GeV]; Events",10., 0., 5.);
-  hNue_Theta  = Nue_dir.make<TH1D>("Nue_Theta","Nue_Theta; Theta [Degrees]; Events", 50., 0., 180);
+  hNue_Energy = Nue_dir.make<TH1D>("Nue_Energy","Nue_Energy; E [GeV]; Events",50., 0., 5.);
+  hNue_Theta  = Nue_dir.make<TH1D>("Nue_Theta","Nue_Theta; Theta [Degrees]; Events", 200., 0., 180);
   hNue_Phi    = Nue_dir.make<TH1D>("Nue_Phi","Nue_Phi; Phi [Degrees]; Events", 10., -180., 180);
   hNue_Energy ->SetOption("HIST,TEXT00");
   hNue_Theta  ->SetOption("HIST,TEXT00");
   hNue_Phi    ->SetOption("HIST,TEXT00");
 
   // Nue bar
-  hNue_bar_Energy = Nue_bar_dir.make<TH1D>("Nue_bar_Energy","Nue_bar_Energy; E [GeV]; Events",10., 0., 5.);
+  hNue_bar_Energy = Nue_bar_dir.make<TH1D>("Nue_bar_Energy","Nue_bar_Energy; E [GeV]; Events",50., 0., 5.);
   hNue_bar_Theta  = Nue_bar_dir.make<TH1D>("Nue_bar_Theta","Nue_bar_Theta; Theta [Degrees]; Events", 10., 0., 180);
   hNue_bar_Phi    = Nue_bar_dir.make<TH1D>("Nue_bar_Phi","Nue_bar_Phi; Phi [Degrees]; Events", 10., -180., 180);
   hNue_bar_Energy ->SetOption("HIST,TEXT00");
@@ -219,7 +211,7 @@ void NueKinematics::beginJob() {
   helectron_E_vs_Theta_All->SetOption("COLZ,TEXT");
   helectron_E_vs_Phi_All->SetOption("COLZ,TEXT");
   
-  helectron_Energy_All = el_All_dir.make<TH1D>("electron_Energy_All","electron_Energy_All; E [GeV]; Events",10., 0., 5.);
+  helectron_Energy_All = el_All_dir.make<TH1D>("electron_Energy_All","electron_Energy_All; E [GeV]; Events",50., 0., 5.);
   helectron_Theta_All  = el_All_dir.make<TH1D>("electron_Theta_All","electron_Theta_All; Theta [Degrees]; Events", 10., 0., 180);
   helectron_Phi_All    = el_All_dir.make<TH1D>("electron_Phi_All","electron_Phi_All; Phi [Degrees]; Events", 10., -180., 180);
   helectron_Energy_All  ->SetOption("HIST,TEXT00");
@@ -227,7 +219,7 @@ void NueKinematics::beginJob() {
   helectron_Phi_All     ->SetOption("HIST,TEXT00");
 
   // Eminus
-  heminus_Energy = eMinus_dir.make<TH1D>("eminus_Energy","eminus_Energy; E [GeV]; Events",10., 0., 5.);
+  heminus_Energy = eMinus_dir.make<TH1D>("eminus_Energy","eminus_Energy; E [GeV]; Events",50., 0., 5.);
   heminus_Theta  = eMinus_dir.make<TH1D>("eminus_Theta","eminus_Theta; Theta [Degrees]; Events", 10., 0., 180);
   heminus_Phi    = eMinus_dir.make<TH1D>("eminus_Phi","eminus_Phi; Phi [Degrees]; Events", 10., -180., 180);
   heminus_Energy ->SetOption("HIST,TEXT00");
@@ -235,7 +227,7 @@ void NueKinematics::beginJob() {
   heminus_Phi   ->SetOption("HIST,TEXT00");
 
   // EPlus
-  heplus_Energy = ePlus_dir.make<TH1D>("eplus_Energy","eplus_Energy; E [GeV]; Events",10., 0., 5.);
+  heplus_Energy = ePlus_dir.make<TH1D>("eplus_Energy","eplus_Energy; E [GeV]; Events",50., 0., 5.);
   heplus_Theta  = ePlus_dir.make<TH1D>("eplus_Theta","eplus_Theta; Theta [Degrees]; Events", 10., 0., 180);
   heplus_Phi    = ePlus_dir.make<TH1D>("eplus_Phi","eplus_Phi; Phi [Degrees]; Events", 10., -180., 180);
   heplus_Energy->SetOption("HIST,TEXT00");
@@ -263,7 +255,9 @@ void NueKinematics::analyze(art::Event const & e) {
 
   for (int p = 0; p < mclist[iList]->NParticles(); p++) { // Loop over GENIE MCTruth Particles
 
-    if (mclist[iList]->GetNeutrino().CCNC() == 1) NC_event ++; // The event was NC and we dont want to include the additional scattered neutrino
+    //if (mclist[iList]->GetNeutrino().CCNC() == 1) NC_event ++; // The event was NC and we dont want to include the additional scattered neutrino
+    if (mclist[iList]->GetNeutrino().CCNC() == 1) continue; // The event was NC then skip the event
+
 
     simb::MCParticle particle{mclist[iList]->GetParticle(p)}; // Get a MC Particle
 
