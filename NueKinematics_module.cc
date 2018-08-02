@@ -262,9 +262,9 @@ void NueKinematics::analyze(art::Event const & e) {
   std::cout << "Running over Event:\t" << e.event() << std::endl;
 
     // Determine event ID
-  	run = event.id().run();
-    subrun = event.id().subRun();
-    evt = event.id().event();
+  	run = e.id().run();
+    subrun = e.id().subRun();
+    evt = e.id().event();
 
 	
   double ParticleE{ 0. };
@@ -326,7 +326,7 @@ void NueKinematics::analyze(art::Event const & e) {
         hNue_bar_Theta  ->Fill( Theta ); 
         hNue_bar_Phi    ->Fill( Phi );
 
-        Nue_Energy->Fill( ParticleE );
+        NueEnergy->Fill( ParticleE );
 
       } 
       else if (particle.PdgCode() == 11){ // e- in the event
