@@ -129,6 +129,13 @@ private:
 
   int NC_event{0};
 
+  // Add Ttree variables 
+  TTree *DataTree
+  int run, subrun, evt;
+  double NueEnergy; //,      NueTheta,      NuePhi;
+  //double ElectronEnergy, ElectronTheta, ElectronPhi;
+
+
 };
 
 
@@ -233,12 +240,32 @@ void NueKinematics::beginJob() {
   heplus_Energy->SetOption("HIST,TEXT00");
   heplus_Theta->SetOption("HIST,TEXT00");
   heplus_Phi->SetOption("HIST,TEXT00");
+
+  // Add Tree Information
+	DataTree->Branch("run",   &run);
+	DataTree->Branch("subrun",&subrun);
+  DataTree->Branch("event", &evt);
+
+  DataTree->Branch("NueEnergy", &NueEnergy);
+  //DataTree->Branch("NueTheta",  &NueTheta);
+  //DataTree->Branch("NuePhi",    &NueEPhi);
+  
+  //DataTree->Branch("ElectronEnergy", &ElectronEnergy);
+  //DataTree->Branch("ElectronTheta",  &ElectronTheta;
+  //DataTree->Branch("ElectronPhi",    &ElectronPhi);
+
 }
 
 void NueKinematics::analyze(art::Event const & e) {
   // Implementation of required member function here.
 
   std::cout << "Running over Event:\t" << e.event() << std::endl;
+
+    // Determine event ID
+  	run = event.id().run();
+    subrun = event.id().subRun();
+    evt = event.id().event();
+
 	
   double ParticleE{ 0. };
   double Theta{ 0. }; 
@@ -298,6 +325,9 @@ void NueKinematics::analyze(art::Event const & e) {
         hNue_bar_Energy ->Fill( ParticleE );
         hNue_bar_Theta  ->Fill( Theta ); 
         hNue_bar_Phi    ->Fill( Phi );
+
+        Nue_Energy->Fill( ParticleE );
+
       } 
       else if (particle.PdgCode() == 11){ // e- in the event
 
