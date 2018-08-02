@@ -132,8 +132,9 @@ private:
   // Add Ttree variables 
   TTree *DataTree;
   int run, subrun, evt;
-  double NueEnergy; //,      NueTheta,      NuePhi;
-  //double ElectronEnergy, ElectronTheta, ElectronPhi;
+  double NueEnergy       NueTheta,      NuePhi;
+  double ElectronEnergy, ElectronTheta, ElectronPhi;
+  int PDG; 
 
 
 };
@@ -249,14 +250,15 @@ void NueKinematics::beginJob() {
 	DataTree->Branch("run",   &run);
 	DataTree->Branch("subrun",&subrun);
   DataTree->Branch("event", &evt);
+  DataTree->Branch("PDG",    &PDG);
 
   DataTree->Branch("NueEnergy", &NueEnergy);
-  //DataTree->Branch("NueTheta",  &NueTheta);
-  //DataTree->Branch("NuePhi",    &NueEPhi);
+  DataTree->Branch("NueTheta",  &NueTheta);
+  DataTree->Branch("NuePhi",    &NueEPhi);
   
-  //DataTree->Branch("ElectronEnergy", &ElectronEnergy);
-  //DataTree->Branch("ElectronTheta",  &ElectronTheta;
-  //DataTree->Branch("ElectronPhi",    &ElectronPhi);
+  DataTree->Branch("ElectronEnergy", &ElectronEnergy);
+  DataTree->Branch("ElectronTheta",  &ElectronTheta;
+  DataTree->Branch("ElectronPhi",    &ElectronPhi);
 
 }
 
@@ -315,8 +317,11 @@ void NueKinematics::analyze(art::Event const & e) {
         hNue_Theta  ->Fill(Theta); 
         hNue_Phi    ->Fill(Phi);
 
-        NueEnergy = ParticleE;
-
+        // Set laues for filling TTree
+        NueEnergy =  ParticleE;
+        NueTheta  =  Theta; 
+        NuePhi    =  Phi;
+        PDG       =  particle.PdgCode();
 
         
       } 
@@ -329,12 +334,15 @@ void NueKinematics::analyze(art::Event const & e) {
         hNue_E_vs_Theta_All   ->Fill( ParticleE, Theta );
         hNue_E_vs_Phi_All     ->Fill( ParticleE, Phi );
 
-
         hNue_bar_Energy ->Fill( ParticleE );
         hNue_bar_Theta  ->Fill( Theta ); 
         hNue_bar_Phi    ->Fill( Phi );
 
-        NueEnergy = ParticleE;
+        // Set laues for filling TTree
+        NueEnergy =  ParticleE;
+        NueTheta  =  Theta; 
+        NuePhi    =  Phi;
+        PDG       =  particle.PdgCode();
 
       } 
       else if (particle.PdgCode() == 11){ // e- in the event
@@ -346,10 +354,15 @@ void NueKinematics::analyze(art::Event const & e) {
         helectron_E_vs_Theta_All ->Fill( ParticleE, Theta );
         helectron_E_vs_Phi_All   ->Fill( ParticleE, Phi );
 
-
         heminus_Energy   ->Fill( ParticleE );
         heminus_Theta    ->Fill( Theta );
         heminus_Phi      ->Fill( Phi );
+
+        // Set laues for filling TTree
+        ElectronEnergy =  ParticleE;
+        ElectronTheta  =  Theta; 
+        ElectronPhi    =  Phi;
+        PDG            =  particle.PdgCode();
 
       } 
       else if (particle.PdgCode() == -11){ // e+ in the event
@@ -361,10 +374,15 @@ void NueKinematics::analyze(art::Event const & e) {
         helectron_E_vs_Theta_All ->Fill( ParticleE, Theta );
         helectron_E_vs_Phi_All   ->Fill( ParticleE, Phi );
 
-
         heplus_Energy   ->Fill( ParticleE );
         heplus_Theta    ->Fill( Theta );
         heplus_Phi      ->Fill( Phi );
+
+        // Set laues for filling TTree
+        ElectronEnergy =  ParticleE;
+        ElectronTheta  =  Theta; 
+        ElectronPhi    =  Phi;
+        PDG            =  particle.PdgCode();
 
       }// END IF CONDITION BLOCK  
     
