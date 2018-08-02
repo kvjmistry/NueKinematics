@@ -171,6 +171,10 @@ void NueKinematics::beginJob() {
 
   // Access ART's TFileService, which will handle histograms/trees/etc.
 	art::ServiceHandle<art::TFileService> tfs;
+
+
+  // Create the TTree and add relavent branches
+  DataTree = tfs->make<TTree>("EventTree","EventTree");
 	
   // Make directories
   art::TFileDirectory Nue_All_dir = tfs->mkdir( "Nue_All_dir" );
