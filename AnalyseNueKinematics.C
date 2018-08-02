@@ -1,4 +1,5 @@
 // Program that loads in the ttree created from the NueKinematics Module and makes some plots as does the Larsoft Module. 
+// WARNING: make sure a plots folder exits in the current directory otherwise the histogram will not get saved and get an error. 
 
 #include "TFile.h"
 #include "TH1F.h"
@@ -10,6 +11,17 @@
 #include <fstream>
 
 
+void Plot1DHist (TH1D *histogram, const char * print_name){
+	auto *c1 = new TCanvas();
+	c1->cd();
+	histogram->Draw();
+    histogram->SetOption("HIST,TEXT00");
+
+	c1->Print(print_name);
+}
+
+
+
 
 // Main Function
 void AnalyseNueKinematics() {
@@ -17,6 +29,10 @@ void AnalyseNueKinematics() {
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     //                                                  Initialize
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    TFile *MyFile = new TFile("plots/Plots_NeuKinematics.root","RECREATE");
+    if ( MyFile->IsOpen() ) printf("File opened successfully\n");
+
+
     // Create Histograms
     // Nue All
     TH2D*   hNue_E_vs_Theta = new TH2D("Nue_E_vs_Theta_All","Nue_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",15., 0., 7. , 10., 0., 180);
@@ -75,7 +91,7 @@ void AnalyseNueKinematics() {
         
 
         helectron_E_vs_Theta->Fill(*ElectronEnergyRV, *ElectronThetaRV );
-        helectron_E_vs_Theta->Fill(*ElectronEnergyRV, *ElectronPhiRV);
+        helectron_E_vs_Phi->Fill(*ElectronEnergyRV, *ElectronPhiRV);
 
         helectron_Energy->Fill(*ElectronEnergyRV);
         helectron_Theta->Fill(*ElectronThetaRV);
@@ -89,38 +105,63 @@ void AnalyseNueKinematics() {
 
     // Nue
     auto cNue_E_vs_Theta = new TCanvas();
-    hNue_E_vs_Theta->Draw("COLZ,TEXT00");
+    hNue_E_vs_Theta->Draw();
+    hNue_E_vs_Theta->SetOption("COLZ,TEXT00");
+    cNue_E_vs_Theta->Print("plots/Nue_Energy_vs_Theta.png");
+    cNue_E_vs_Theta->Close();
     
     auto cNue_E_vs_Phi = new TCanvas();
-    hNue_E_vs_Phi->Draw("COLZ,TEXT00");
+    hNue_E_vs_Phi->Draw();
+    hNue_E_vs_Phi->SetOption("COLZ,TEXT00");
+    cNue_E_vs_Phi->Print("plots/Nue_Evergy_vs_Phi.png");
     
     auto cNue_Energy = new TCanvas();
-    hNue_Energy->Draw("HIST,TEXT00");
+    hNue_Energy->Draw();
+    hNue_Energy->SetOption("HIST,TEXT00");
+    cNue_Energy->Print("plots/Nue_Energy.png");
 
     auto cNue_Theta = new TCanvas();
-    hNue_Theta->Draw("HIST,TEXT00");
+    hNue_Theta->Draw();
+    hNue_Theta->SetOption("HIST,TEXT00");
+    cNue_Theta->Print("plots/Nue_Theta.png");
 
     auto cNue_Phi = new TCanvas();
-    hNue_Phi->Draw("HIST,TEXT00");
+    hNue_Phi->Draw();
+    hNue_Phi->SetOption("HIST,TEXT00");
+    cNue_Phi->Print("plots/Nue_Phi.png");
 
     
     // Electron
     auto celectron_E_vs_Theta = new TCanvas();
-    helectron_E_vs_Theta->Draw("COLZ,TEXT00");
+    helectron_E_vs_Theta->Draw();
+    helectron_E_vs_Theta->SetOption("COLZ,TEXT00");
+    celectron_E_vs_Theta->Print("plots/El_Energy_vs_Theta.png");
     
     auto celectron_E_vs_Phi = new TCanvas();
-    helectron_E_vs_Phi->Draw("COLZ,TEXT00");
+    helectron_E_vs_Phi->Draw();
+    helectron_E_vs_Phi->SetOption("COLZ,TEXT00");
+    celectron_E_vs_Phi->Print("plots/El_Energy_vs_Phi.png");
     
     auto celectron_Energy = new TCanvas();
-    helectron_Energy->Draw("HIST,TEXT00");
+    helectron_Energy->Draw();
+    helectron_Energy->SetOption("HIST,TEXT00");
+    celectron_Energy->Print("plots/El_Energy.png");
 
-    auto celectron_Theta = new TCanvas();
-    helectron_Theta->Draw("HIST,TEXT00");
+    //auto celectron_Theta = new TCanvas();
+    // helectron_Theta->Draw();
+    // helectron_Theta->SetOption("HIST,TEXT00");
+    // celectron_Theta->Print("plots/El_Theta.png");
 
-    auto celectron_Phi = new TCanvas();
-    helectron_Phi->Draw("HIST,TEXT00");
+    //Plot1DHist(helectron_Theta, "plots/El_Theta.png" ); 
+    //Plot1DHist(helectron_Phi, "plots/El_Phi.png" );
 
+    //auto celectron_Phi = new TCanvas();
+    //helectron_Phi->Draw();
+    //helectron_Phi->SetOption("HIST,TEXT00");
+    //celectron_Phi->Print("plots/El_Phi.png");
+    
 
+    MyFile->Write();
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     //                                                     END
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
