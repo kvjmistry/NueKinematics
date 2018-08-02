@@ -254,7 +254,7 @@ void NueKinematics::beginJob() {
 
   DataTree->Branch("NueEnergy", &NueEnergy);
   DataTree->Branch("NueTheta",  &NueTheta);
-  DataTree->Branch("NuePhi",    &NueEPhi);
+  DataTree->Branch("NuePhi",    &NuePhi);
   
   DataTree->Branch("ElectronEnergy", &ElectronEnergy);
   DataTree->Branch("ElectronTheta",  &ElectronTheta);
