@@ -261,10 +261,10 @@ void NueKinematics::analyze(art::Event const & e) {
 
   std::cout << "Running over Event:\t" << e.event() << std::endl;
 
-    // Determine event ID
-  	run = e.id().run();
-    subrun = e.id().subRun();
-    evt = e.id().event();
+  // Determine event ID
+  run = e.id().run();
+  subrun = e.id().subRun();
+  evt = e.id().event();
 
 	
   double ParticleE{ 0. };
@@ -310,6 +310,10 @@ void NueKinematics::analyze(art::Event const & e) {
         hNue_Energy ->Fill( ParticleE );
         hNue_Theta  ->Fill(Theta); 
         hNue_Phi    ->Fill(Phi);
+
+        NueEnergy = ParticleE;
+
+
         
       } 
       else if (particle.PdgCode() == -12){ // nue bar in the event
@@ -326,7 +330,7 @@ void NueKinematics::analyze(art::Event const & e) {
         hNue_bar_Theta  ->Fill( Theta ); 
         hNue_bar_Phi    ->Fill( Phi );
 
-        NueEnergy->Fill( ParticleE );
+        NueEnergy = ParticleE;
 
       } 
       else if (particle.PdgCode() == 11){ // e- in the event
@@ -363,6 +367,9 @@ void NueKinematics::analyze(art::Event const & e) {
     }// END if a beam neutrino
 
   }// END loop over mclist
+
+  DataTree->Fill();
+
 }
 
 
