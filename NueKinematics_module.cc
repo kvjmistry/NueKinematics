@@ -288,8 +288,8 @@ void NueKinematics::analyze(art::Event const & e) {
 
   for (int p = 0; p < mclist[iList]->NParticles(); p++) { // Loop over GENIE MCTruth Particles
 
-    //if (mclist[iList]->GetNeutrino().CCNC() == 1) NC_event ++; // The event was NC and we dont want to include the additional scattered neutrino
-    if (mclist[iList]->GetNeutrino().CCNC() == 1) continue; // The event was NC then skip the event
+    if (mclist[iList]->GetNeutrino().CCNC() == 1) NC_event ++; // The event was NC and we dont want to include the additional scattered neutrino
+    //if (mclist[iList]->GetNeutrino().CCNC() == 1) continue; // The event was NC then skip the event
 
 
     simb::MCParticle particle{mclist[iList]->GetParticle(p)}; // Get a MC Particle
