@@ -1,5 +1,7 @@
 // Program that loads in the ttree created from the NueKinematics Module and makes some plots as does the Larsoft Module. 
 // WARNING: make sure a plots folder exits in the current directory otherwise the histogram will not get saved and get an error. 
+// Execute over the NueKinematics.root file which has been run over the larsoft module NueKinematics_module.cc
+// This file can be run by simply typing root AnalyseNueKinematics.C
 
 #include "TFile.h"
 #include "TH1F.h"
@@ -10,17 +12,41 @@
 #include <iostream>
 #include <fstream>
 
-
-void Plot1DHist (TH1D *histogram, const char * print_name){
-	auto *c1 = new TCanvas();
+// Function to make a Th1D histogram (Histogram variable name, output file path/name.extension, options for histogram)
+void Plot1DHist (TH1D *histogram, const char * print_name, const char *Options){
+	auto *c1 = new TCanvas(); // Create a TCanvas
 	c1->cd();
-	histogram->Draw();
-    histogram->SetOption("HIST,TEXT00");
+	
+    histogram->Draw();       // Draw hist and set the options
+    histogram->SetOption(Options);
 
-	c1->Print(print_name);
+	c1->Print(print_name);   // Save the histogram
+    c1->Close();             // Close the Canvas
 }
 
+// Function to make a Th2D histogram (Histogram variable name, output file path/name, options for histogram)
+void Plot2DHist (TH2D *histogram, const char * print_name, const char *Options){
+	auto *c1 = new TCanvas(); // Create a TCanvas
+	c1->cd();
 
+	histogram->Draw(); // Draw hist and set the options
+    histogram->SetOption(Options);
+	
+    c1->Print(print_name); // Save the histogram
+    c1->Close(); // Close the Canvas
+}
+
+// Function to make a Th2D histogram (Histogram variable name, output file path/name, options for histogram)
+void Plot3DHist (TH3D *histogram, const char * print_name, const char *Options){
+	auto *c1 = new TCanvas(); // Create a TCanvas
+	c1->cd();
+
+	histogram->Draw(); // Draw hist and set the options
+    histogram->SetOption(Options);
+	
+    c1->Print(print_name); // Save the histogram
+    c1->Close(); // Close the Canvas
+}
 
 
 // Main Function
@@ -32,17 +58,22 @@ void AnalyseNueKinematics() {
     TFile *MyFile = new TFile("plots/Plots_NeuKinematics.root","RECREATE");
     if ( MyFile->IsOpen() ) printf("File opened successfully\n");
 
-
     // Create Histograms
     // Nue All
+    TH3D*   hNue_E_vs_Theta_vs_Phi = new TH3D("Nue_E_vs_Theta_vs_Phi_All","Nue_E_vs_Theta_All; Energy [GeV]; Theta [degrees]; Phi [degrees]", 20., 0., 10. , 10., 0., 180, 10., -180., 180 );
+
     TH2D*   hNue_E_vs_Theta = new TH2D("Nue_E_vs_Theta_All","Nue_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",15., 0., 7. , 10., 0., 180);
-    TH2D*   hNue_E_vs_Phi   = new   TH2D("Nue_E_vs_Phi_All","Nue_E_vs_Phi_All; Energy [GeV]; Phi [degrees]",10., 0., 10. , 10., -180., 180);
+    TH2D*   hNue_E_vs_Phi   = new TH2D("Nue_E_vs_Phi_All","Nue_E_vs_Phi_All; Energy [GeV]; Phi [degrees]",10., 0., 10. , 10., -180., 180);
 
     TH1D* 	hNue_Energy = new TH1D("Nue_Energy_All","Nue_Energy_All; E [GeV]; Events",50., 0., 5);
-    TH1D* 	hNue_Theta = new TH1D("Nue_Theta_All","Nue_Theta_All; Theta [Degrees]; Events", 100., 0., 180);
-    TH1D* 	hNue_Phi = new TH1D("Nue_Phi_All","Nue_Phi_All; Phi [Degrees]; Events", 10., -180., 180);
+    TH1D* 	hNue_Theta =  new TH1D("Nue_Theta_All","Nue_Theta_All; Theta [Degrees]; Events", 100., 0., 180);
+    TH1D* 	hNue_Phi =    new TH1D("Nue_Phi_All","Nue_Phi_All; Phi [Degrees]; Events", 10., -180., 180);
+
+    
 
     // Electron all
+    TH3D*   helectron_E_vs_Theta_vs_Phi = new TH3D("electron_E_vs_Theta_vs_Phi_All","electron_E_vs_Theta_All; Energy [GeV]; Theta [degrees]; Phi [degrees]", 20., 0., 10. , 10., 0., 180, 10., -180., 180 );
+
     TH2D*   helectron_E_vs_Theta = new TH2D("electron_E_vs_Theta_All","electron_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",20., 0., 10. , 10., 0., 180);
     TH2D*   helectron_E_vs_Phi   = new TH2D("electron_E_vs_Phi_All","electron_E_vs_Phi_All; Energy [GeV]; Phi [degrees]",20., 0., 10. , 10., -180., 180);
   
@@ -50,6 +81,7 @@ void AnalyseNueKinematics() {
     TH1D* 	helectron_Theta  = new TH1D("electron_Theta_All","electron_Theta_All; Theta [Degrees]; Events", 10., 0., 180);
     TH1D* 	helectron_Phi    = new TH1D("electron_Phi_All","electron_Phi_All; Phi [Degrees]; Events", 10., -180., 180);
 
+    
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     //                                                  Read In TTree
@@ -65,7 +97,7 @@ void AnalyseNueKinematics() {
 	// Create the tree reader and its data containers
 	TTreeReader myReader("microboonewvtof/EventTree", fileIN);
 
-	TTreeReaderValue<int> PDGRV(myReader, "PDG"); 					// Load in the PDG variable
+	TTreeReaderValue<int>    PDGRV(myReader, "PDG"); 					// Load in the PDG variable
 	TTreeReaderValue<double> NueEnergyRV(myReader, "NueEnergy"); 	// Load in the NueEnergy variable
     TTreeReaderValue<double> NueThetaRV(myReader, "NueTheta"); 	    // Load in the NueTheta variable
     TTreeReaderValue<double> NuePhiRV(myReader, "NuePhi"); 	        // Load in the NuePhi variable
@@ -81,14 +113,18 @@ void AnalyseNueKinematics() {
 	
 	while (myReader.Next()) {
 
+        // Fill Nue Histograms
+        hNue_E_vs_Theta_vs_Phi ->Fill(*NueEnergyRV, *NueThetaRV, *NuePhiRV );
+
         hNue_E_vs_Theta->Fill(*NueEnergyRV, *NueThetaRV );
         hNue_E_vs_Phi->Fill(*NueEnergyRV, *NuePhiRV);
-
 
 		hNue_Energy->Fill(*NueEnergyRV); 
         hNue_Theta->Fill(*NueThetaRV); 
         hNue_Phi->Fill(*NuePhiRV); 
         
+        // Fill Electron Histograms
+        helectron_E_vs_Theta_vs_Phi ->Fill(*ElectronEnergyRV, *ElectronThetaRV, *ElectronPhiRV );
 
         helectron_E_vs_Theta->Fill(*ElectronEnergyRV, *ElectronThetaRV );
         helectron_E_vs_Phi->Fill(*ElectronEnergyRV, *ElectronPhiRV);
@@ -104,64 +140,28 @@ void AnalyseNueKinematics() {
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     // Nue
-    auto cNue_E_vs_Theta = new TCanvas();
-    hNue_E_vs_Theta->Draw();
-    hNue_E_vs_Theta->SetOption("COLZ,TEXT00");
-    cNue_E_vs_Theta->Print("plots/Nue_Energy_vs_Theta.png");
-    cNue_E_vs_Theta->Close();
-    
-    auto cNue_E_vs_Phi = new TCanvas();
-    hNue_E_vs_Phi->Draw();
-    hNue_E_vs_Phi->SetOption("COLZ,TEXT00");
-    cNue_E_vs_Phi->Print("plots/Nue_Evergy_vs_Phi.png");
-    
-    auto cNue_Energy = new TCanvas();
-    hNue_Energy->Draw();
-    hNue_Energy->SetOption("HIST,TEXT00");
-    cNue_Energy->Print("plots/Nue_Energy.png");
+    Plot3DHist(hNue_E_vs_Theta_vs_Phi, "plots/Nue_Energy_vs_Theta_vs_Phi.png", "LEGO2");
 
-    auto cNue_Theta = new TCanvas();
-    hNue_Theta->Draw();
-    hNue_Theta->SetOption("HIST,TEXT00");
-    cNue_Theta->Print("plots/Nue_Theta.png");
-
-    auto cNue_Phi = new TCanvas();
-    hNue_Phi->Draw();
-    hNue_Phi->SetOption("HIST,TEXT00");
-    cNue_Phi->Print("plots/Nue_Phi.png");
+    Plot2DHist(hNue_E_vs_Theta, "plots/Nue_Energy_vs_Theta.png", "COLZ,TEXT00" );
+    Plot2DHist(hNue_E_vs_Phi,   "plots/Nue_Energy_vs_Phi.png",   "COLZ,TEXT00" );
+    Plot1DHist(hNue_Energy,     "plots/Nue_Energy.png",          "HIST,TEXT00" );
+    Plot1DHist(hNue_Theta,      "plots/Nue_Theta.png",           "HIST,TEXT00" ); 
+    Plot1DHist(hNue_Phi,        "plots/Nue_Phi.png",             "HIST,TEXT00" );
 
     
     // Electron
-    auto celectron_E_vs_Theta = new TCanvas();
-    helectron_E_vs_Theta->Draw();
-    helectron_E_vs_Theta->SetOption("COLZ,TEXT00");
-    celectron_E_vs_Theta->Print("plots/El_Energy_vs_Theta.png");
-    
-    auto celectron_E_vs_Phi = new TCanvas();
-    helectron_E_vs_Phi->Draw();
-    helectron_E_vs_Phi->SetOption("COLZ,TEXT00");
-    celectron_E_vs_Phi->Print("plots/El_Energy_vs_Phi.png");
-    
-    auto celectron_Energy = new TCanvas();
-    helectron_Energy->Draw();
-    helectron_Energy->SetOption("HIST,TEXT00");
-    celectron_Energy->Print("plots/El_Energy.png");
+    Plot3DHist(helectron_E_vs_Theta_vs_Phi, "plots/El_Energy_vs_Theta_vs_Phi.png", "LEGO2" );
 
-    //auto celectron_Theta = new TCanvas();
-    // helectron_Theta->Draw();
-    // helectron_Theta->SetOption("HIST,TEXT00");
-    // celectron_Theta->Print("plots/El_Theta.png");
+    Plot2DHist(helectron_E_vs_Theta,"plots/El_Energy_vs_Theta.png", "COLZ,TEXT00" );
+    Plot2DHist(helectron_E_vs_Phi,  "plots/El_Energy_vs_Phi.png",   "COLZ,TEXT00" );
+    Plot1DHist(helectron_Energy,    "plots/El_Energy.png",          "HIST,TEXT00" );
+    Plot1DHist(helectron_Theta,     "plots/El_Theta.png",           "HIST,TEXT00" ); 
+    Plot1DHist(helectron_Phi,       "plots/El_Phi.png",             "HIST,TEXT00" );
 
-    //Plot1DHist(helectron_Theta, "plots/El_Theta.png" ); 
-    //Plot1DHist(helectron_Phi, "plots/El_Phi.png" );
 
-    //auto celectron_Phi = new TCanvas();
-    //helectron_Phi->Draw();
-    //helectron_Phi->SetOption("HIST,TEXT00");
-    //celectron_Phi->Print("plots/El_Phi.png");
-    
+    MyFile->Write(); // Save to a root file 
 
-    MyFile->Write();
+    gSystem->Exit(1); // Quit ROOT
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     //                                                     END
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
