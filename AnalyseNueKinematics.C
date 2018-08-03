@@ -19,6 +19,7 @@ void Plot1DHist (TH1D *histogram, const char * print_name, const char *Options){
 	
     histogram->Draw();       // Draw hist and set the options
     histogram->SetOption(Options);
+    histogram->SetLineWidth(2);
 
 	c1->Print(print_name);   // Save the histogram
     c1->Close();             // Close the Canvas
@@ -51,6 +52,7 @@ void Plot3DHist (TH3D *histogram, const char * print_name, const char *Options){
 
 // Main Function
 void AnalyseNueKinematics() {
+    gStyle->SetOptStat(0);
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     //                                                  Initialize
@@ -66,7 +68,7 @@ void AnalyseNueKinematics() {
     TH2D*   hNue_E_vs_Phi   = new TH2D("Nue_E_vs_Phi_All","Nue_E_vs_Phi_All; Energy [GeV]; Phi [degrees]",10., 0., 10. , 10., -180., 180);
 
     TH1D* 	hNue_Energy = new TH1D("Nue_Energy_All","Nue_Energy_All; E [GeV]; Events",50., 0., 5);
-    TH1D* 	hNue_Theta =  new TH1D("Nue_Theta_All","Nue_Theta_All; Theta [Degrees]; Events", 100., 0., 180);
+    TH1D* 	hNue_Theta =  new TH1D("Nue_Theta_All","Nue_Theta_All; Theta [Degrees]; Events", 100., 0., 1);
     TH1D* 	hNue_Phi =    new TH1D("Nue_Phi_All","Nue_Phi_All; Phi [Degrees]; Events", 10., -180., 180);
 
     
@@ -81,7 +83,6 @@ void AnalyseNueKinematics() {
     TH1D* 	helectron_Theta  = new TH1D("electron_Theta_All","electron_Theta_All; Theta [Degrees]; Events", 10., 0., 180);
     TH1D* 	helectron_Phi    = new TH1D("electron_Phi_All","electron_Phi_All; Phi [Degrees]; Events", 10., -180., 180);
 
-    
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     //                                                  Read In TTree
@@ -144,9 +145,9 @@ void AnalyseNueKinematics() {
 
     Plot2DHist(hNue_E_vs_Theta, "plots/Nue_Energy_vs_Theta.png", "COLZ,TEXT00" );
     Plot2DHist(hNue_E_vs_Phi,   "plots/Nue_Energy_vs_Phi.png",   "COLZ,TEXT00" );
-    Plot1DHist(hNue_Energy,     "plots/Nue_Energy.png",          "HIST,TEXT00" );
-    Plot1DHist(hNue_Theta,      "plots/Nue_Theta.png",           "HIST,TEXT00" ); 
-    Plot1DHist(hNue_Phi,        "plots/Nue_Phi.png",             "HIST,TEXT00" );
+    Plot1DHist(hNue_Energy,     "plots/Nue_Energy.png",          "HIST" );
+    Plot1DHist(hNue_Theta,      "plots/Nue_Theta.png",           "HIST" ); 
+    Plot1DHist(hNue_Phi,        "plots/Nue_Phi.png",             "HIST" );
 
     
     // Electron
@@ -154,14 +155,15 @@ void AnalyseNueKinematics() {
 
     Plot2DHist(helectron_E_vs_Theta,"plots/El_Energy_vs_Theta.png", "COLZ,TEXT00" );
     Plot2DHist(helectron_E_vs_Phi,  "plots/El_Energy_vs_Phi.png",   "COLZ,TEXT00" );
-    Plot1DHist(helectron_Energy,    "plots/El_Energy.png",          "HIST,TEXT00" );
-    Plot1DHist(helectron_Theta,     "plots/El_Theta.png",           "HIST,TEXT00" ); 
-    Plot1DHist(helectron_Phi,       "plots/El_Phi.png",             "HIST,TEXT00" );
+    Plot1DHist(helectron_Energy,    "plots/El_Energy.png",          "HIST" );
+    Plot1DHist(helectron_Theta,     "plots/El_Theta.png",           "HIST" ); 
+    Plot1DHist(helectron_Phi,       "plots/El_Phi.png",             "HIST" );
 
 
     MyFile->Write(); // Save to a root file 
-
+    MyFile->Close();
     gSystem->Exit(1); // Quit ROOT
+
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     //                                                     END
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
