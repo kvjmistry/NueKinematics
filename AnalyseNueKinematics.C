@@ -50,24 +50,26 @@ void Plot2DHist (TH2D *histogram, const char * print_name, const char *Options){
 }
 
 // Function that plots 2 th2d histograms with differnt pallete colours on the same plot(Histogram variable name, output file path/name, options for histogram)
-void Plot2DHistSAME (TH2D *histogram, TH2D *histogram2, const char * print_name){
+void Plot2DHistSAME (TH2D *histogram, TH2D *histogram2, const char * print_name, std::vector<TLine*> vLine ){
 	
     auto *c1 = new TCanvas(); // Create a TCanvas
 	c1->cd();
 
-    TPaveText *text = new TPaveText(5.,160., 7., 180.);
-    TExec *ex1 = new TExec("ex1","gStyle->SetPalette(kBird, 0, 0.1);");         // Colour pallete for BNB
-    TExec *ex2 = new TExec("ex2","gStyle->SetPalette(kCherry , 0, 0.1);"); // Colour pallete for NuMI
+	histogram->Draw("COLZ"); // Draw hist and set the options
 
-	histogram->Draw("COL"); // Draw hist and set the options
-    ex1->Draw();
+    for (unsigned int i =0; i < vLine.size(); i++){
+        vLine[i]->SetLineColor(kBlack);
+        vLine[i]->SetLineWidth(2);
+        vLine[i]->Draw("SAME");
 
-    ex2->Draw();
-    histogram2->Draw("COL, SAME");
+    }
 
-    text->AddText("BNB -- Blue, NuMI -- Red");
-    text->Draw();
+    TLatex latex;
+    latex.SetTextSize(0.05);
+    //latex.SetTextAlign(13);  //align at top
+    latex.DrawLatex(6,120,"#Box NuMI Phase Space");
 
+    
     c1->Print(print_name); // Save the histogram
     c1->Close(); // Close the Canvas
 
@@ -99,9 +101,9 @@ void AnalyseNueKinematics() {
 
     // Create Histograms
     // Nue All BNB
-    TH3D*   hNue_E_vs_Theta_vs_Phi = new TH3D("Nue_E_vs_Theta_vs_Phi_All","Nue_E_vs_Theta_All; Energy [GeV]; Theta [degrees]; Phi [degrees]", 20., 0., 10. , 10., 0., 180, 10., -180., 180 );
+    TH3D*   hNue_E_vs_Theta_vs_Phi = new TH3D("Nue_E_vs_Theta_vs_Phi_All","Nue_E_vs_Theta_vs_Phi_All; Energy [GeV]; Theta [degrees]; Phi [degrees]", 20., 0., 10. , 10., 0., 180, 10., -180., 180 );
 
-    TH2D*   hNue_E_vs_Theta = new TH2D("Nue_E_vs_Theta_All","Nue_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",15., 0., 8. , 10., 0., 180);
+    TH2D*   hNue_E_vs_Theta = new TH2D("Nue_E_vs_Theta_All","Nue_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",15., 0., 10. , 10., 0., 180);
     TH2D*   hNue_E_vs_Phi   = new TH2D("Nue_E_vs_Phi_All","Nue_E_vs_Phi_All; Energy [GeV]; Phi [degrees]",10., 0., 10. , 10., -180., 180);
 
     TH1D* 	hNue_Energy = new TH1D("Nue_Energy_All","Nue_Energy_All; E [GeV]; Events",50., 0., 5);
@@ -110,7 +112,7 @@ void AnalyseNueKinematics() {
 
     
     // Electron all BNB
-    TH3D*   helectron_E_vs_Theta_vs_Phi = new TH3D("electron_E_vs_Theta_vs_Phi_All","electron_E_vs_Theta_All; Energy [GeV]; Theta [degrees]; Phi [degrees]", 20., 0., 10. , 10., 0., 180, 10., -180., 180 );
+    TH3D*   helectron_E_vs_Theta_vs_Phi = new TH3D("electron_E_vs_Theta_vs_Phi_All","electron_E_vs_Theta_vs_Phi_All; Energy [GeV]; Theta [degrees]; Phi [degrees]", 20., 0., 10. , 10., 0., 180, 10., -180., 180 );
 
     TH2D*   helectron_E_vs_Theta = new TH2D("electron_E_vs_Theta_All","electron_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",20., 0., 10. , 10., 0., 180);
     TH2D*   helectron_E_vs_Phi   = new TH2D("electron_E_vs_Phi_All","electron_E_vs_Phi_All; Energy [GeV]; Phi [degrees]",20., 0., 10. , 10., -180., 180);
@@ -239,8 +241,65 @@ void AnalyseNueKinematics() {
 	}
 
 
+    // Define some lines for coltons phase space
+    
+    // Nue E vs Theta NuMI
+    std::vector<TLine*> vLine_Nue_E_vs_Theta;
 
+    TLine *l_theta_1  = new TLine(0., 18.0, 6.67, 18.0);     vLine_Nue_E_vs_Theta.push_back(l_theta_1);
+    TLine *l_theta_2  = new TLine(6.67, 18.0, 6.67, 35.9);   vLine_Nue_E_vs_Theta.push_back(l_theta_2);
+    TLine *l_theta_3  = new TLine(2.1, 35.9, 6.67, 35.9);    vLine_Nue_E_vs_Theta.push_back(l_theta_3);
+    TLine *l_theta_4  = new TLine(2.1, 35.9, 2.1, 54.1);     vLine_Nue_E_vs_Theta.push_back(l_theta_4);
+    TLine *l_theta_5  = new TLine(1.1, 54.1, 2.1, 54.1);     vLine_Nue_E_vs_Theta.push_back(l_theta_5);
+    TLine *l_theta_6  = new TLine(1.1, 54.1, 1.1, 72.1);     vLine_Nue_E_vs_Theta.push_back(l_theta_6);
+    TLine *l_theta_7  = new TLine(0.53, 72.1, 1.1, 72.1);    vLine_Nue_E_vs_Theta.push_back(l_theta_7);
+    TLine *l_theta_8  = new TLine(0.53, 72.1, 0.53, 125.9);  vLine_Nue_E_vs_Theta.push_back(l_theta_8);
+    TLine *l_theta_9  = new TLine(0.0, 125.9, 0.53, 125.9);  vLine_Nue_E_vs_Theta.push_back(l_theta_9);
+    TLine *l_theta_10 = new TLine(7.4, 18.0, 8.0, 18.0);     vLine_Nue_E_vs_Theta.push_back(l_theta_10);
+    TLine *l_theta_11 = new TLine(8.0, 18.0, 8.0, 35.9);     vLine_Nue_E_vs_Theta.push_back(l_theta_11);
+    TLine *l_theta_12 = new TLine(7.4, 35.9, 8.0, 35.9);     vLine_Nue_E_vs_Theta.push_back(l_theta_12);
+    TLine *l_theta_13 = new TLine(7.4,18.0, 7.4, 35.9);      vLine_Nue_E_vs_Theta.push_back(l_theta_13);
 
+    // Nue E vs Phi NuMI
+    std::vector<TLine*> vLine_Nue_E_vs_Phi;
+    TLine *l_phi_1  = new TLine(0., 0., 8.0, 0.0);        vLine_Nue_E_vs_Phi.push_back(l_phi_1);
+    TLine *l_phi_2  = new TLine(8.0, 0.0, 8.0, 36.1);     vLine_Nue_E_vs_Phi.push_back(l_phi_2);
+    TLine *l_phi_3  = new TLine(0.0, 36.1, 8.0, 36.1);    vLine_Nue_E_vs_Phi.push_back(l_phi_3);
+
+    // El E vs Theta
+    std::vector<TLine*> vLine_El_E_vs_Theta;
+
+    TLine *l_el_theta_1  = new TLine(0, 0, 4, 0);               vLine_El_E_vs_Theta.push_back(l_el_theta_1);
+    TLine *l_el_theta_2  = new TLine(4, 0, 4 ,18);              vLine_El_E_vs_Theta.push_back(l_el_theta_2);
+    TLine *l_el_theta_3  = new TLine(4, 18, 5.5, 18);           vLine_El_E_vs_Theta.push_back(l_el_theta_3);
+    TLine *l_el_theta_4  = new TLine(5.5, 18, 5.5, 36.0);       vLine_El_E_vs_Theta.push_back(l_el_theta_4);
+    TLine *l_el_theta_5  = new TLine(5.5, 36, 3.5, 36.0);       vLine_El_E_vs_Theta.push_back(l_el_theta_5);
+    TLine *l_el_theta_6  = new TLine(3.5, 36.0, 3.5, 53.8);     vLine_El_E_vs_Theta.push_back(l_el_theta_6);
+    TLine *l_el_theta_7  = new TLine(3.5, 53.8, 2.0, 53.8);     vLine_El_E_vs_Theta.push_back(l_el_theta_7);
+    TLine *l_el_theta_8  = new TLine(2.0, 53.8, 2.0, 71.9);     vLine_El_E_vs_Theta.push_back(l_el_theta_8);
+    TLine *l_el_theta_9  = new TLine(2.0, 71.9, 1.5, 71.9);     vLine_El_E_vs_Theta.push_back(l_el_theta_9);
+    TLine *l_el_theta_10 = new TLine(1.5, 71.9, 1.5, 90.0);     vLine_El_E_vs_Theta.push_back(l_el_theta_10);
+    TLine *l_el_theta_11 = new TLine(1.5, 90.0, 1 ,90);         vLine_El_E_vs_Theta.push_back(l_el_theta_11);
+    TLine *l_el_theta_12 = new TLine(1, 90, 1, 126);            vLine_El_E_vs_Theta.push_back(l_el_theta_12);
+    TLine *l_el_theta_13 = new TLine(1, 126, 0.5, 126);         vLine_El_E_vs_Theta.push_back(l_el_theta_13);
+    TLine *l_el_theta_14 = new TLine(0.5, 126, 0.5, 180);       vLine_El_E_vs_Theta.push_back(l_el_theta_14);
+    TLine *l_el_theta_15 = new TLine(6.0, 18, 7, 18);           vLine_El_E_vs_Theta.push_back(l_el_theta_15);
+    TLine *l_el_theta_16 = new TLine(7, 18, 7, 36);             vLine_El_E_vs_Theta.push_back(l_el_theta_16);
+    TLine *l_el_theta_17 = new TLine(7, 36, 6, 36);             vLine_El_E_vs_Theta.push_back(l_el_theta_17);
+    TLine *l_el_theta_18 = new TLine(6,36,6,18);                vLine_El_E_vs_Theta.push_back(l_el_theta_18);
+
+    // Nue E vs Phi NuMI
+    std::vector<TLine*> vLine_El_E_vs_Phi;
+    TLine *l_el_phi_1  = new TLine(0, -35.6, 5.5, -35.6);        vLine_El_E_vs_Phi.push_back(l_el_phi_1);
+    TLine *l_el_phi_2  = new TLine(5.5, -35.6, 5.5, 0);     vLine_El_E_vs_Phi.push_back(l_el_phi_2);
+    TLine *l_el_phi_3  = new TLine(5.5, 0 ,5, 0);    vLine_El_E_vs_Phi.push_back(l_el_phi_3);
+
+    TLine *l_el_phi_4  = new TLine(5, 0, 5, 35.6);    vLine_El_E_vs_Phi.push_back(l_el_phi_4);
+    TLine *l_el_phi_5  = new TLine(5, 35.6, 0 ,35.6);    vLine_El_E_vs_Phi.push_back(l_el_phi_5);
+    TLine *l_el_phi_6  = new TLine(6, 0 , 7, 0);    vLine_El_E_vs_Phi.push_back(l_el_phi_6);
+    TLine *l_el_phi_7  = new TLine(6, 35.6, 7, 35.6);    vLine_El_E_vs_Phi.push_back(l_el_phi_7);
+    TLine *l_el_phi_8  = new TLine(6, 0, 6, 35.6);    vLine_El_E_vs_Phi.push_back(l_el_phi_8);
+    TLine *l_el_phi_9  = new TLine(7, 0, 7, 35.6);    vLine_El_E_vs_Phi.push_back(l_el_phi_9);
 
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -274,11 +333,11 @@ void AnalyseNueKinematics() {
     Plot2DHist(helectron_E_vs_Phi_NuMI, "plots/NuMI/El_Energy_vs_Phi_NuMI.png", "COLZ, TEXT00" );
 
     // BNB and NuMI Plots for Nue (Superimposed)
-    Plot2DHistSAME(hNue_E_vs_Theta , hNue_E_vs_Theta_NuMI, "plots/Nue_Energy_vs_Theta_Overlaid.png" );
-    Plot2DHistSAME(hNue_E_vs_Phi , hNue_E_vs_Phi_NuMI, "plots/Nue_Energy_vs_Phi_Overlaid.png" );
+    Plot2DHistSAME(hNue_E_vs_Theta , hNue_E_vs_Theta_NuMI, "plots/Nue_Energy_vs_Theta_Overlaid.png", vLine_Nue_E_vs_Theta );
+    Plot2DHistSAME(hNue_E_vs_Phi , hNue_E_vs_Phi_NuMI, "plots/Nue_Energy_vs_Phi_Overlaid.png", vLine_Nue_E_vs_Phi );
 
-    Plot2DHistSAME(helectron_E_vs_Theta , helectron_E_vs_Theta_NuMI, "plots/El_Energy_vs_Theta_Overlaid.png" );
-    Plot2DHistSAME(helectron_E_vs_Phi , helectron_E_vs_Phi_NuMI, "plots/El_Energy_vs_Phi_Overlaid.png" );
+    Plot2DHistSAME(helectron_E_vs_Theta , helectron_E_vs_Theta_NuMI, "plots/El_Energy_vs_Theta_Overlaid.png", vLine_El_E_vs_Theta );
+    Plot2DHistSAME(helectron_E_vs_Phi , helectron_E_vs_Phi_NuMI, "plots/El_Energy_vs_Phi_Overlaid.png", vLine_El_E_vs_Phi );
 
 
     MyFile->Write(); // Save to a root file 
