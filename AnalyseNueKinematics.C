@@ -115,7 +115,7 @@ void AnalyseNueKinematics() {
     TH3D*   helectron_E_vs_Theta_vs_Phi = new TH3D("electron_E_vs_Theta_vs_Phi_All","electron_E_vs_Theta_vs_Phi_All; Energy [GeV]; Theta [degrees]; Phi [degrees]", 20., 0., 10. , 10., 0., 180, 10., -180., 180 );
 
     TH2D*   helectron_E_vs_Theta = new TH2D("electron_E_vs_Theta_All","electron_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",20., 0., 10. , 10., 0., 180);
-    TH2D*   helectron_E_vs_Phi   = new TH2D("electron_E_vs_Phi_All","electron_E_vs_Phi_All; Energy [GeV]; Phi [Rad]",20., 0., 10. , 10., -3.145, 3.145);
+    TH2D*   helectron_E_vs_Phi   = new TH2D("electron_E_vs_Phi_All","electron_E_vs_Phi_All; Energy [GeV]; Phi [degrees]",20., 0., 10. , 10., -180., 180);
   
     TH1D* 	helectron_Energy = new TH1D("electron_Energy_All","electron_Energy_All; E [GeV]; Events",50., 0., 5.);
     TH1D* 	helectron_Theta  = new TH1D("electron_Theta_All","electron_Theta_All; Theta [Degrees]; Events", 10., 0., 180);
@@ -222,7 +222,7 @@ void AnalyseNueKinematics() {
         // hNue_E_vs_Theta_vs_Phi ->Fill(*NueEnergyRV, *NueThetaRV, *NuePhiRV );
 
         hNue_E_vs_Theta_NuMI->Fill(*NuMI_NueEnergy_RV,  NuMI_theta );
-        hNue_E_vs_Phi_NuMI->Fill(*NuMI_NueEnergy_RV, *NuMI_NuePhi_RV);
+        hNue_E_vs_Phi_NuMI->Fill(*NuMI_NueEnergy_RV, *NuMI_NuePhi_RV * (180 / 3.1415));
 
 		// hNue_Energy->Fill(*NueEnergyRV); 
         // hNue_Theta->Fill(*NueThetaRV); 
