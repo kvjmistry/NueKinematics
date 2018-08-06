@@ -49,7 +49,7 @@ void Plot2DHist (TH2D *histogram, const char * print_name, const char *Options){
     c1->Close(); // Close the Canvas
 }
 
-// Function that plots 2 th2d histograms with differnt pallete colours on the same plot(Histogram variable name, output file path/name, options for histogram)
+// Function that plots 2 th2d histograms with differnt pallete colours on the same plot(Histogram variable name, second histogram output file path/name, vecotor of TLines for phase space. )
 void Plot2DHistSAME (TH2D *histogram, TH2D *histogram2, const char * print_name, std::vector<TLine*> vLine ){
 	
     auto *c1 = new TCanvas(); // Create a TCanvas
@@ -57,21 +57,21 @@ void Plot2DHistSAME (TH2D *histogram, TH2D *histogram2, const char * print_name,
 
 	histogram->Draw("COLZ"); // Draw hist and set the options
 
+    // Loop over all lines in the TLine vecotr and draw on top of graph for phase space comparisons. 
     for (unsigned int i =0; i < vLine.size(); i++){
-        vLine[i]->SetLineColor(kBlack);
+       
+        vLine[i]->SetLineColor(kBlack); // Line specifiers
         vLine[i]->SetLineWidth(2);
         vLine[i]->Draw("SAME");
-
     }
 
+    // Define a text box for the numi phase space label
     TLatex latex;
     latex.SetTextSize(0.05);
-    //latex.SetTextAlign(13);  //align at top
     latex.DrawLatex(6,120,"#Box NuMI Phase Space");
 
-    
-    c1->Print(print_name); // Save the histogram
-    c1->Close(); // Close the Canvas
+    c1->Print(print_name);  // Save the histogram
+    c1->Close();            // Close the Canvas
 
     gStyle->SetPalette(kBird); // Reset back to the default colour pallete. 
 }
@@ -115,7 +115,7 @@ void AnalyseNueKinematics() {
     TH3D*   helectron_E_vs_Theta_vs_Phi = new TH3D("electron_E_vs_Theta_vs_Phi_All","electron_E_vs_Theta_vs_Phi_All; Energy [GeV]; Theta [degrees]; Phi [degrees]", 20., 0., 10. , 10., 0., 180, 10., -180., 180 );
 
     TH2D*   helectron_E_vs_Theta = new TH2D("electron_E_vs_Theta_All","electron_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",20., 0., 10. , 10., 0., 180);
-    TH2D*   helectron_E_vs_Phi   = new TH2D("electron_E_vs_Phi_All","electron_E_vs_Phi_All; Energy [GeV]; Phi [degrees]",20., 0., 10. , 10., -180., 180);
+    TH2D*   helectron_E_vs_Phi   = new TH2D("electron_E_vs_Phi_All","electron_E_vs_Phi_All; Energy [GeV]; Phi [Rad]",20., 0., 10. , 10., -3.145, 3.145);
   
     TH1D* 	helectron_Energy = new TH1D("electron_Energy_All","electron_Energy_All; E [GeV]; Events",50., 0., 5.);
     TH1D* 	helectron_Theta  = new TH1D("electron_Theta_All","electron_Theta_All; Theta [Degrees]; Events", 10., 0., 180);
@@ -182,7 +182,7 @@ void AnalyseNueKinematics() {
 
         helectron_Energy->Fill(*ElectronEnergyRV);
         helectron_Theta->Fill(*ElectronThetaRV);
-        helectron_Phi->Fill(*ElectronPhiRV);
+        helectron_Phi->Fill(*ElectronPhiRV * ( 3.1415 / 180. ));
 
 	}
 
@@ -232,7 +232,7 @@ void AnalyseNueKinematics() {
         // helectron_E_vs_Theta_vs_Phi ->Fill(*ElectronEnergyRV, *ElectronThetaRV, *ElectronPhiRV );
 
         helectron_E_vs_Theta_NuMI->Fill(*NuMI_ElectronEnergy_RV, *NuMI_ElectronTheta_RV );
-        helectron_E_vs_Phi_NuMI->Fill(*NuMI_ElectronEnergy_RV, *NuMI_ElectronPhi_RV);
+        helectron_E_vs_Phi_NuMI->Fill(*NuMI_ElectronEnergy_RV, *NuMI_ElectronPhi_RV * (180 / 3.1415));
 
         // helectron_Energy->Fill(*ElectronEnergyRV);
         // helectron_Theta->Fill(*ElectronThetaRV);
@@ -240,8 +240,10 @@ void AnalyseNueKinematics() {
 
 	}
 
-
-    // Define some lines for coltons phase space
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    //                                        Define the lines for coltons numi phase space
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // 
     
     // Nue E vs Theta NuMI
     std::vector<TLine*> vLine_Nue_E_vs_Theta;
