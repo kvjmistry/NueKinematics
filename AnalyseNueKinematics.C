@@ -18,7 +18,7 @@
 #include <fstream>
 
 // Function to make a Th1D histogram (Histogram variable name, output file path/name.extension, options for histogram)
-void Plot1DHist (TH1D *histogram, const char * print_name, const char *Options){
+void Plot1DHist (TH1D *histogram, const char * print_name, const char *Options, double scalefactor){
 	auto *c1 = new TCanvas(); // Create a TCanvas
 	c1->cd();
 	
@@ -26,23 +26,27 @@ void Plot1DHist (TH1D *histogram, const char * print_name, const char *Options){
     histogram->SetOption(Options);
     histogram->SetLineWidth(2);
 
+    histogram->Scale(scalefactor); // Scale the histogram to the number of NuMI events
+
 	c1->Print(print_name);   // Save the histogram
     c1->Close();             // Close the Canvas
 }
 
 // Function to make a Th2D histogram (Histogram variable name, output file path/name, options for histogram)
-void Plot2DHist (TH2D *histogram, const char * print_name, const char *Options){
+void Plot2DHist (TH2D *histogram, const char * print_name, const char *Options, double scalefactor){
 	
     auto *c1 = new TCanvas(); // Create a TCanvas
 	c1->cd();
 
-   gStyle->SetPalette(kBird,0,1);
-   histogram->SetLineWidth(1);
-   histogram->SetLineColor(kBlack);
+    gStyle->SetPalette(kBird,0,1);
+    histogram->SetLineWidth(1);
+    histogram->SetLineColor(kBlack);
 
 
     histogram->Draw(); // Draw hist and set the options
     histogram->SetOption(Options);
+
+    histogram->Scale(scalefactor); // Scale the histogram to the number of NuMI events
     
 	
     c1->Print(print_name); // Save the histogram
@@ -50,7 +54,7 @@ void Plot2DHist (TH2D *histogram, const char * print_name, const char *Options){
 }
 
 // Function that plots 2 th2d histograms with differnt pallete colours on the same plot(Histogram variable name, second histogram output file path/name, vecotor of TLines for phase space. )
-void Plot2DHistSAME (TH2D *histogram, TH2D *histogram2, const char * print_name, std::vector<TLine*> vLine ){
+void Plot2DHistSAME (TH2D *histogram, TH2D *histogram2, const char * print_name, std::vector<TLine*> vLine, double scalefactor ){
 	
     auto *c1 = new TCanvas(); // Create a TCanvas
 	c1->cd();
@@ -70,6 +74,8 @@ void Plot2DHistSAME (TH2D *histogram, TH2D *histogram2, const char * print_name,
     latex.SetTextSize(0.05);
     latex.DrawLatex(6,120,"#Box NuMI Phase Space");
 
+    histogram->Scale(scalefactor); // Scale the histogram to the number of NuMI events
+
     c1->Print(print_name);  // Save the histogram
     c1->Close();            // Close the Canvas
 
@@ -77,13 +83,15 @@ void Plot2DHistSAME (TH2D *histogram, TH2D *histogram2, const char * print_name,
 }
 
 // Function to make a Th2D histogram (Histogram variable name, output file path/name, options for histogram)
-void Plot3DHist (TH3D *histogram, const char * print_name, const char *Options){
+void Plot3DHist (TH3D *histogram, const char * print_name, const char *Options, double scalefactor){
 	auto *c1 = new TCanvas(); // Create a TCanvas
 	c1->cd();
 
 	histogram->Draw(); // Draw hist and set the options
     histogram->SetOption(Options);
 	
+    histogram->Scale(scalefactor); // Scale the histogram to the number of NuMI events
+
     c1->Print(print_name); // Save the histogram
     c1->Close(); // Close the Canvas
 }
@@ -91,9 +99,23 @@ void Plot3DHist (TH3D *histogram, const char * print_name, const char *Options){
 
 // Main Function
 void AnalyseNueKinematics() {
+    // General formatting
     gStyle->SetOptStat(0);
+    gStyle->SetPaintTextFormat("1.1f");
 
-    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // Counters for Number of events
+    double BNB_Counter{0}, NuMI_Counter{0};
+
+
+    // Define a variable bin width for the histograms.
+    Float_t bins[] = { -180, -140, -100, -45, 0, 45, 90, 140, 180 };
+    Int_t   binnum = sizeof(bins)/sizeof(Float_t) - 1; 
+
+    Float_t bins2[] = { 0, 0.67,  1, 1.4, 2, 6, 8 };
+    Int_t   binnum2 = sizeof(bins2)/sizeof(Float_t) - 1;
+
+
+    // ++++++++++++++++++++++++++++++++++s++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     //                                                  Initialize
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     TFile *MyFile = new TFile("plots/Plots_NeuKinematics.root","RECREATE");
@@ -104,11 +126,11 @@ void AnalyseNueKinematics() {
     TH3D*   hNue_E_vs_Theta_vs_Phi = new TH3D("Nue_E_vs_Theta_vs_Phi_All","Nue_E_vs_Theta_vs_Phi_All; Energy [GeV]; Theta [degrees]; Phi [degrees]", 20., 0., 10. , 10., 0., 180, 10., -180., 180 );
 
     TH2D*   hNue_E_vs_Theta = new TH2D("Nue_E_vs_Theta_All","Nue_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",15., 0., 10. , 10., 0., 180);
-    TH2D*   hNue_E_vs_Phi   = new TH2D("Nue_E_vs_Phi_All","Nue_E_vs_Phi_All; Energy [GeV]; Phi [degrees]",10., 0., 10. , 10., -180., 180);
+    TH2D*   hNue_E_vs_Phi   = new TH2D("Nue_E_vs_Phi_All","Nue_E_vs_Phi_All; Energy [GeV]; Phi [degrees]", binnum2, bins2 , binnum, bins);
 
     TH1D* 	hNue_Energy = new TH1D("Nue_Energy_All","Nue_Energy_All; E [GeV]; Events",50., 0., 5);
     TH1D* 	hNue_Theta =  new TH1D("Nue_Theta_All","Nue_Theta_All; Theta [Degrees]; Events", 100., 0., 1);
-    TH1D* 	hNue_Phi =    new TH1D("Nue_Phi_All","Nue_Phi_All; Phi [Degrees]; Events", 10., -180., 180);
+    TH1D* 	hNue_Phi =    new TH1D("Nue_Phi_All","Nue_Phi_All; Phi [Degrees]; Events", binnum, bins);
 
     
     // Electron all BNB
@@ -163,6 +185,7 @@ void AnalyseNueKinematics() {
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	
 	while (myReader.Next()) {
+        BNB_Counter++;
 
         // Fill Nue Histograms
         hNue_E_vs_Theta_vs_Phi ->Fill(*NueEnergyRV, *NueThetaRV, *NuePhiRV );
@@ -182,7 +205,7 @@ void AnalyseNueKinematics() {
 
         helectron_Energy->Fill(*ElectronEnergyRV);
         helectron_Theta->Fill(*ElectronThetaRV);
-        helectron_Phi->Fill(*ElectronPhiRV * ( 3.1415 / 180. ));
+        helectron_Phi->Fill(*ElectronPhiRV );
 
 	}
 
@@ -216,6 +239,8 @@ void AnalyseNueKinematics() {
     double NuMI_theta{0};
 
 	while (myReader2.Next()) {
+        NuMI_Counter++;
+
         NuMI_theta = acos(*NuMI_NueTheta_RV) * (180 / 3.1415);
 
         // // Fill Nue Histograms
@@ -293,57 +318,71 @@ void AnalyseNueKinematics() {
     // Nue E vs Phi NuMI
     std::vector<TLine*> vLine_El_E_vs_Phi;
     TLine *l_el_phi_1  = new TLine(0, -35.6, 5.5, -35.6);        vLine_El_E_vs_Phi.push_back(l_el_phi_1);
-    TLine *l_el_phi_2  = new TLine(5.5, -35.6, 5.5, 0);     vLine_El_E_vs_Phi.push_back(l_el_phi_2);
-    TLine *l_el_phi_3  = new TLine(5.5, 0 ,5, 0);    vLine_El_E_vs_Phi.push_back(l_el_phi_3);
+    TLine *l_el_phi_2  = new TLine(5.5, -35.6, 5.5, 0);          vLine_El_E_vs_Phi.push_back(l_el_phi_2);
+    TLine *l_el_phi_3  = new TLine(5.5, 0 ,5, 0);                vLine_El_E_vs_Phi.push_back(l_el_phi_3);
 
-    TLine *l_el_phi_4  = new TLine(5, 0, 5, 35.6);    vLine_El_E_vs_Phi.push_back(l_el_phi_4);
-    TLine *l_el_phi_5  = new TLine(5, 35.6, 0 ,35.6);    vLine_El_E_vs_Phi.push_back(l_el_phi_5);
-    TLine *l_el_phi_6  = new TLine(6, 0 , 7, 0);    vLine_El_E_vs_Phi.push_back(l_el_phi_6);
-    TLine *l_el_phi_7  = new TLine(6, 35.6, 7, 35.6);    vLine_El_E_vs_Phi.push_back(l_el_phi_7);
-    TLine *l_el_phi_8  = new TLine(6, 0, 6, 35.6);    vLine_El_E_vs_Phi.push_back(l_el_phi_8);
-    TLine *l_el_phi_9  = new TLine(7, 0, 7, 35.6);    vLine_El_E_vs_Phi.push_back(l_el_phi_9);
+    TLine *l_el_phi_4  = new TLine(5, 0, 5, 35.6);               vLine_El_E_vs_Phi.push_back(l_el_phi_4);
+    TLine *l_el_phi_5  = new TLine(5, 35.6, 0 ,35.6);            vLine_El_E_vs_Phi.push_back(l_el_phi_5);
+    TLine *l_el_phi_6  = new TLine(6, 0 , 7, 0);                 vLine_El_E_vs_Phi.push_back(l_el_phi_6);
+    TLine *l_el_phi_7  = new TLine(6, 35.6, 7, 35.6);            vLine_El_E_vs_Phi.push_back(l_el_phi_7);
+    TLine *l_el_phi_8  = new TLine(6, 0, 6, 35.6);               vLine_El_E_vs_Phi.push_back(l_el_phi_8);
+    TLine *l_el_phi_9  = new TLine(7, 0, 7, 35.6);               vLine_El_E_vs_Phi.push_back(l_el_phi_9);
 
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     //                                                  Make Histograms
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // Define a scale factor to normalise histograms
+    double scalefactor{NuMI_Counter / BNB_Counter};
+
+    std::cout <<" ++++++++++++++++====================+++++++++++++++++++++++++++++++ \n" << std::endl;
+    std::cout << "Scale Factor for BNB events:\t" << scalefactor  << std::endl;
+    std::cout <<"\n ++++++++++++++=====================+++++++++++++++++++++++++++++++ " << std::endl;
+
+    std::cout << "\nCreating Histograms....\n" << std::endl;
 
     // Nue BNB Only
-    Plot3DHist(hNue_E_vs_Theta_vs_Phi, "plots/BNB/Nue_Energy_vs_Theta_vs_Phi.png", "LEGO2");
+    //Plot3DHist(hNue_E_vs_Theta_vs_Phi, "plots/BNB/Nue_Energy_vs_Theta_vs_Phi.png", "LEGO2", scalefactor);
 
-    Plot2DHist(hNue_E_vs_Theta, "plots/BNB/Nue_Energy_vs_Theta.png", "COLZ,TEXT00" );
-    Plot2DHist(hNue_E_vs_Phi,   "plots/BNB/Nue_Energy_vs_Phi.png",   "COLZ,TEXT00" );
-    Plot1DHist(hNue_Energy,     "plots/BNB/Nue_Energy.png",          "HIST" );
-    Plot1DHist(hNue_Theta,      "plots/BNB/Nue_Theta.png",           "HIST" ); 
-    Plot1DHist(hNue_Phi,        "plots/BNB/Nue_Phi.png",             "HIST" );
+    //Plot2DHist(hNue_E_vs_Theta, "plots/BNB/Nue_Energy_vs_Theta.png", "COLZ,TEXT00", scalefactor );
+    Plot2DHist(hNue_E_vs_Phi,   "plots/BNB/Nue_Energy_vs_Phi.png",   "COLZ,TEXT00", scalefactor );
+    // Plot1DHist(hNue_Energy,     "plots/BNB/Nue_Energy.png",          "HIST",        scalefactor );
+    // Plot1DHist(hNue_Theta,      "plots/BNB/Nue_Theta.png",           "HIST",        scalefactor ); 
+    // Plot1DHist(hNue_Phi,        "plots/BNB/Nue_Phi.png",             "HIST",        scalefactor );
 
-    // NuMi Nue
-    Plot2DHist(hNue_E_vs_Theta_NuMI, "plots/NuMI/Nue_Energy_vs_Theta_NuMI.png", "COLZ, TEXT00" );
-    Plot2DHist(hNue_E_vs_Phi_NuMI, "plots/NuMI/Nue_Energy_vs_Phi_NuMI.png", "COLZ, TEXT00" );
+    // // NuMi Nue
+    // Plot2DHist(hNue_E_vs_Theta_NuMI, "plots/NuMI/Nue_Energy_vs_Theta_NuMI.png", "COLZ, TEXT00",     scalefactor );
+    // Plot2DHist(hNue_E_vs_Phi_NuMI, "plots/NuMI/Nue_Energy_vs_Phi_NuMI.png", "COLZ, TEXT00",         scalefactor );
 
-    // Electron BNB Only
-    Plot3DHist(helectron_E_vs_Theta_vs_Phi, "plots/BNB/El_Energy_vs_Theta_vs_Phi.png", "LEGO2" );
+    // // Electron BNB Only
+    // Plot3DHist(helectron_E_vs_Theta_vs_Phi, "plots/BNB/El_Energy_vs_Theta_vs_Phi.png", "LEGO2",     scalefactor );
 
-    Plot2DHist(helectron_E_vs_Theta,"plots/BNB/El_Energy_vs_Theta.png", "COLZ,TEXT00" );
-    Plot2DHist(helectron_E_vs_Phi,  "plots/BNB/El_Energy_vs_Phi.png",   "COLZ,TEXT00" );
-    Plot1DHist(helectron_Energy,    "plots/BNB/El_Energy.png",          "HIST" );
-    Plot1DHist(helectron_Theta,     "plots/BNB/El_Theta.png",           "HIST" ); 
-    Plot1DHist(helectron_Phi,       "plots/BNB/El_Phi.png",             "HIST" );
+    // Plot2DHist(helectron_E_vs_Theta,"plots/BNB/El_Energy_vs_Theta.png", "COLZ,TEXT00", scalefactor );
+    // Plot2DHist(helectron_E_vs_Phi,  "plots/BNB/El_Energy_vs_Phi.png",   "COLZ,TEXT00", scalefactor );
+    // Plot1DHist(helectron_Energy,    "plots/BNB/El_Energy.png",          "HIST",        scalefactor );
+    // Plot1DHist(helectron_Theta,     "plots/BNB/El_Theta.png",           "HIST",        scalefactor ); 
+    // Plot1DHist(helectron_Phi,       "plots/BNB/El_Phi.png",             "HIST",        scalefactor );
 
-     // NuMi Electron
-    Plot2DHist(helectron_E_vs_Theta_NuMI, "plots/NuMI/El_Energy_vs_Theta_NuMI.png", "COLZ, TEXT00" );
-    Plot2DHist(helectron_E_vs_Phi_NuMI, "plots/NuMI/El_Energy_vs_Phi_NuMI.png", "COLZ, TEXT00" );
+    //  // NuMi Electron
+    // Plot2DHist(helectron_E_vs_Theta_NuMI, "plots/NuMI/El_Energy_vs_Theta_NuMI.png", "COLZ, TEXT00", scalefactor );
+    // Plot2DHist(helectron_E_vs_Phi_NuMI, "plots/NuMI/El_Energy_vs_Phi_NuMI.png", "COLZ, TEXT00",     scalefactor );
 
-    // BNB and NuMI Plots for Nue (Superimposed)
-    Plot2DHistSAME(hNue_E_vs_Theta , hNue_E_vs_Theta_NuMI, "plots/Nue_Energy_vs_Theta_Overlaid.png", vLine_Nue_E_vs_Theta );
-    Plot2DHistSAME(hNue_E_vs_Phi , hNue_E_vs_Phi_NuMI, "plots/Nue_Energy_vs_Phi_Overlaid.png", vLine_Nue_E_vs_Phi );
+    // // BNB and NuMI Plots for Nue (Superimposed)
+    // Plot2DHistSAME(hNue_E_vs_Theta , hNue_E_vs_Theta_NuMI, "plots/Nue_Energy_vs_Theta_Overlaid.png", vLine_Nue_E_vs_Theta , scalefactor);
+    // Plot2DHistSAME(hNue_E_vs_Phi , hNue_E_vs_Phi_NuMI, "plots/Nue_Energy_vs_Phi_Overlaid.png", vLine_Nue_E_vs_Phi,          scalefactor );
 
-    Plot2DHistSAME(helectron_E_vs_Theta , helectron_E_vs_Theta_NuMI, "plots/El_Energy_vs_Theta_Overlaid.png", vLine_El_E_vs_Theta );
-    Plot2DHistSAME(helectron_E_vs_Phi , helectron_E_vs_Phi_NuMI, "plots/El_Energy_vs_Phi_Overlaid.png", vLine_El_E_vs_Phi );
+    // Plot2DHistSAME(helectron_E_vs_Theta , helectron_E_vs_Theta_NuMI, "plots/El_Energy_vs_Theta_Overlaid.png", vLine_El_E_vs_Theta, scalefactor );
+    // Plot2DHistSAME(helectron_E_vs_Phi , helectron_E_vs_Phi_NuMI, "plots/El_Energy_vs_Phi_Overlaid.png", vLine_El_E_vs_Phi,         scalefactor );
 
+    std::cout <<" ++++++++++++++++====================+++++++++++++++++++++++++++++++ \n" << std::endl;
+    std::cout <<"BNB Events:\t" << BNB_Counter << "\tNuMI Events:\t" << NuMI_Counter << std::endl;
+    std::cout <<"\n ++++++++++++++=====================+++++++++++++++++++++++++++++++ " << std::endl;
 
     MyFile->Write(); // Save to a root file 
     MyFile->Close();
+
+    
+
     gSystem->Exit(1); // Quit ROOT
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
