@@ -107,12 +107,42 @@ void AnalyseNueKinematics() {
     double BNB_Counter{0}, NuMI_Counter{0};
 
 
-    // Define a variable bin width for the histograms.
-    Float_t bins[] = { -180, -140, -100, -45, 0, 45, 90, 140, 180 };
-    Int_t   binnum = sizeof(bins)/sizeof(Float_t) - 1; 
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    //                                       Define a variable bin widths for the histograms.
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    
 
-    Float_t bins2[] = { 0, 0.67,  1, 1.4, 2, 6, 8 };
-    Int_t   binnum2 = sizeof(bins2)/sizeof(Float_t) - 1;
+    // ---- Nue E vs Phi -----
+    Float_t bins_Phi_Nue[] = { -180, -140, -100, -45, 0, 45, 90, 140, 180 }; // The bins for Phi in the Nue E vs Phi Plot
+    Int_t   binnum_Phi_Nue = sizeof(bins_Phi_Nue)/sizeof(Float_t) - 1; 
+
+    Float_t bins_EPhi_Nue[] = { 0, 0.67,  1, 1.4, 2, 6, 8 }; // The bins for E in the Nue E vs Phi Plot
+    Int_t   binnum_EPhi_Nue = sizeof(bins_EPhi_Nue)/sizeof(Float_t) - 1; // As above, but for the bin numbers. 
+    // ---- ------------ -----
+
+    // ---- Nue E vs Theta -----
+    Float_t bins_Theta_Nue[] = { 0,  45,  180 }; // The bins for Theta in the Nue E vs Theta Plot
+    Int_t   binnum_Theta_Nue = sizeof(bins_Theta_Nue)/sizeof(Float_t) - 1; 
+
+    Float_t bins_ETheta_Nue[] = { 0,  0.3, 0.4, 0.48, 0.52, 0.56, 0.6, 0.64, 0.66, 0.7, 0.725,  0.75, 0.8, 0.84, 0.88, 0.9, 0.92, 0.94, 0.96, 0.98,  1, 1.05,  1.1, 1.15, 1.2, 1.22, 1.24, 1.26, 1.28, 1.3,1.34, 1.38, 1.42, 1.48, 1.54, 1.6,1.64, 1.68, 1.74, 1.8, 1.85, 1.9, 2, 2.1, 2.25, 2.3, 2.35, 2.5, 2.6, 2.85, 3.2, 3.5, 6, 8 }; // The bins for E in the Nue E vs Theta Plot
+    Int_t   binnum_ETheta_Nue = sizeof(bins_ETheta_Nue)/sizeof(Float_t) - 1; // As above, but for the bin numbers. 
+    // ---- ------------ -----
+
+    // ---- Nue E vs Phi -----
+    Float_t bins_Phi_El[] = { -180, -135, -90, -45, 0, 45, 90, 135, 180 }; // The bins for Phi in the El E vs Phi Plot
+    Int_t   binnum_Phi_El = sizeof(bins_Phi_El)/sizeof(Float_t) - 1; 
+
+    Float_t bins_EPhi_El[] = { 0, 0.3,  0.53, 0.82, 1.3, 6, 8 }; // The bins for E in the El E vs Phi Plot
+    Int_t   binnum_EPhi_El = sizeof(bins_EPhi_El)/sizeof(Float_t) - 1; // As above, but for the bin numbers. 
+    // ---- ------------ -----
+
+    // ---- Nue E vs Theta -----
+    Float_t bins_Theta_Nue[] = { 0,  45,  180 }; // The bins for Theta in the Nue E vs Theta Plot
+    Int_t   binnum_Theta_Nue = sizeof(bins_Theta_Nue)/sizeof(Float_t) - 1; 
+
+    Float_t bins_ETheta_Nue[] = { 0,  0.3, 0.4, 0.48, 0.52, 0.56, 0.6, 0.64, 0.66, 0.7, 0.725,  0.75, 0.8, 0.84, 0.88, 0.9, 0.92, 0.94, 0.96, 0.98,  1, 1.05,  1.1, 1.15, 1.2, 1.22, 1.24, 1.26, 1.28, 1.3,1.34, 1.38, 1.42, 1.48, 1.54, 1.6,1.64, 1.68, 1.74, 1.8, 1.85, 1.9, 2, 2.1, 2.25, 2.3, 2.35, 2.5, 2.6, 2.85, 3.2, 3.5, 6, 8 }; // The bins for E in the Nue E vs Theta Plot
+    Int_t   binnum_ETheta_Nue = sizeof(bins_ETheta_Nue)/sizeof(Float_t) - 1; // As above, but for the bin numbers. 
+    // ---- ------------ -----
 
 
     // ++++++++++++++++++++++++++++++++++s++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -125,19 +155,19 @@ void AnalyseNueKinematics() {
     // Nue All BNB
     TH3D*   hNue_E_vs_Theta_vs_Phi = new TH3D("Nue_E_vs_Theta_vs_Phi_All","Nue_E_vs_Theta_vs_Phi_All; Energy [GeV]; Theta [degrees]; Phi [degrees]", 20., 0., 10. , 10., 0., 180, 10., -180., 180 );
 
-    TH2D*   hNue_E_vs_Theta = new TH2D("Nue_E_vs_Theta_All","Nue_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",15., 0., 10. , 10., 0., 180);
-    TH2D*   hNue_E_vs_Phi   = new TH2D("Nue_E_vs_Phi_All","Nue_E_vs_Phi_All; Energy [GeV]; Phi [degrees]", binnum2, bins2 , binnum, bins);
+    TH2D*   hNue_E_vs_Theta = new TH2D("Nue_E_vs_Theta_All","Nue_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",binnum_ETheta_Nue ,bins_ETheta_Nue, binnum_Theta_Nue ,bins_Theta_Nue);  // Fixed Vals 15., 0., 10. , 10., 0., 180
+    TH2D*   hNue_E_vs_Phi   = new TH2D("Nue_E_vs_Phi_All","Nue_E_vs_Phi_All; Energy [GeV]; Phi [degrees]", binnum_EPhi_Nue, bins_EPhi_Nue , binnum_Phi_Nue, bins_Phi_Nue);
 
     TH1D* 	hNue_Energy = new TH1D("Nue_Energy_All","Nue_Energy_All; E [GeV]; Events",50., 0., 5);
     TH1D* 	hNue_Theta =  new TH1D("Nue_Theta_All","Nue_Theta_All; Theta [Degrees]; Events", 100., 0., 1);
-    TH1D* 	hNue_Phi =    new TH1D("Nue_Phi_All","Nue_Phi_All; Phi [Degrees]; Events", binnum, bins);
+    TH1D* 	hNue_Phi =    new TH1D("Nue_Phi_All","Nue_Phi_All; Phi [Degrees]; Events", binnum_Phi_Nue, bins_Phi_Nue);
 
     
     // Electron all BNB
     TH3D*   helectron_E_vs_Theta_vs_Phi = new TH3D("electron_E_vs_Theta_vs_Phi_All","electron_E_vs_Theta_vs_Phi_All; Energy [GeV]; Theta [degrees]; Phi [degrees]", 20., 0., 10. , 10., 0., 180, 10., -180., 180 );
 
     TH2D*   helectron_E_vs_Theta = new TH2D("electron_E_vs_Theta_All","electron_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",20., 0., 10. , 10., 0., 180);
-    TH2D*   helectron_E_vs_Phi   = new TH2D("electron_E_vs_Phi_All","electron_E_vs_Phi_All; Energy [GeV]; Phi [degrees]",20., 0., 10. , 10., -180., 180);
+    TH2D*   helectron_E_vs_Phi   = new TH2D("electron_E_vs_Phi_All","electron_E_vs_Phi_All; Energy [GeV]; Phi [degrees]",binnum_EPhi_El,bins_EPhi_El, binnum_Phi_El, bins_Phi_El  ); // Fixed Values 20., 0., 10. , 10., -180., 180
   
     TH1D* 	helectron_Energy = new TH1D("electron_Energy_All","electron_Energy_All; E [GeV]; Events",50., 0., 5.);
     TH1D* 	helectron_Theta  = new TH1D("electron_Theta_All","electron_Theta_All; Theta [Degrees]; Events", 10., 0., 180);
@@ -345,7 +375,7 @@ void AnalyseNueKinematics() {
     //Plot3DHist(hNue_E_vs_Theta_vs_Phi, "plots/BNB/Nue_Energy_vs_Theta_vs_Phi.png", "LEGO2", scalefactor);
 
     //Plot2DHist(hNue_E_vs_Theta, "plots/BNB/Nue_Energy_vs_Theta.png", "COLZ,TEXT00", scalefactor );
-    Plot2DHist(hNue_E_vs_Phi,   "plots/BNB/Nue_Energy_vs_Phi.png",   "COLZ,TEXT00", scalefactor );
+    //Plot2DHist(hNue_E_vs_Phi,   "plots/BNB/Nue_Energy_vs_Phi.png",   "COLZ,TEXT00", scalefactor );
     // Plot1DHist(hNue_Energy,     "plots/BNB/Nue_Energy.png",          "HIST",        scalefactor );
     // Plot1DHist(hNue_Theta,      "plots/BNB/Nue_Theta.png",           "HIST",        scalefactor ); 
     // Plot1DHist(hNue_Phi,        "plots/BNB/Nue_Phi.png",             "HIST",        scalefactor );
@@ -358,7 +388,7 @@ void AnalyseNueKinematics() {
     // Plot3DHist(helectron_E_vs_Theta_vs_Phi, "plots/BNB/El_Energy_vs_Theta_vs_Phi.png", "LEGO2",     scalefactor );
 
     // Plot2DHist(helectron_E_vs_Theta,"plots/BNB/El_Energy_vs_Theta.png", "COLZ,TEXT00", scalefactor );
-    // Plot2DHist(helectron_E_vs_Phi,  "plots/BNB/El_Energy_vs_Phi.png",   "COLZ,TEXT00", scalefactor );
+     Plot2DHist(helectron_E_vs_Phi,  "plots/BNB/El_Energy_vs_Phi.png",   "COLZ,TEXT00", scalefactor );
     // Plot1DHist(helectron_Energy,    "plots/BNB/El_Energy.png",          "HIST",        scalefactor );
     // Plot1DHist(helectron_Theta,     "plots/BNB/El_Theta.png",           "HIST",        scalefactor ); 
     // Plot1DHist(helectron_Phi,       "plots/BNB/El_Phi.png",             "HIST",        scalefactor );
