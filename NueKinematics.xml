@@ -1,0 +1,49 @@
+<!-- Project details -->
+<!DOCTYPE project [
+
+<!ENTITY user "kmistry">
+<!ENTITY name "NueKinematics">
+<!ENTITY numberjobs "2">
+<!ENTITY filesperjob "100">
+]>
+
+<project name="&name;">
+
+  <!-- Group -->
+  <!--<group>uboone</group> -->
+  <numevents>15000</numevents>
+  <!-- Project size (numevents is an upper limit) -->
+  <numjobs>&numberjobs;</numjobs> <!-- 4000 -->
+  <maxfilesperjob>&filesperjob;</maxfilesperjob>
+
+  <!-- Where to look for fcl files (in addition to $FHICL_FILE_PATH) -->
+  <fcldir>/pnfs/uboone/persistent/users/&user;/&name;/</fcldir>
+
+  <!-- Operating System -->
+  <os>SL6</os>
+
+  <!-- Batch resources -->
+  <resource>DEDICATED,OPPORTUNISTIC,OFFSITE</resource> <!--,OFFSITE-->
+
+  <!-- Larsoft information -->
+  <larsoft>
+    <tag>v06_26_01_13</tag>
+    <qual>e10:prof</qual>
+    <local>/pnfs/uboone/resilient/users/kmistry/tars/&name;.tar</local>
+  </larsoft>
+
+  <!-- Stages -->
+  <stage name = "analyze">
+    <numjobs>&numberjobs;</numjobs>
+    <maxfilesperjob>&filesperjob;</maxfilesperjob>
+    <schema>root</schema>
+    <inputdef>kmistry_prodgenie_bnb_intrinsic_nue_uboone_mcc8_4_detsim_physical_31_07_18</inputdef>
+    <fcl>NueKinematics.fcl</fcl>
+    <outdir>/pnfs/uboone/scratch/users/&user;/&name;/out/</outdir>
+    <logdir>/pnfs/uboone/scratch/users/&user;/&name;/out/</logdir>
+    <workdir>/pnfs/uboone/resilient/users/&user;/&name;/work/</workdir>
+    <bookdir>/uboone/data/users/&user;/&name;/book</bookdir>
+    <memory>500</memory>
+    <jobsub>--expected-lifetime=short</jobsub>
+  </stage>
+</project>
