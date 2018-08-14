@@ -1,7 +1,10 @@
 *.xlsx
+*.eps
 *.jpg
 *.jpeg
 *.png
 *.gif
 .DS_Store
+*.pdf
+*.pptx
 *.root
