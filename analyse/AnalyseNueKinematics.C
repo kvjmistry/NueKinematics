@@ -98,6 +98,49 @@ void Plot3DHist (TH3D *histogram, const char * print_name, const char *Options, 
     c1->Close(); // Close the Canvas
 }
 
+// Function that will get a histogram and turn its edges into an outline for plotting a phase space comparison. 
+std::vector<TLine*> MakeTLineVector(TH2D *histogram){
+
+    std::vector<TLine*> vLine; // The final vector containing the phase space. 
+    
+    // Get the bin max values to loop over. 
+    int YRange{histogram->GetNbinsY()};
+    int XRange{histogram->GetNbinsX()};
+
+    // Positions to draw the line. // Initializing. 
+    double x0{histogram->GetXaxis()->GetBinLowEdge(1)};
+    double x1{histogram->GetYaxis()->GetBinLowEdge(1)}; 
+    double y0{histogram->GetYaxis()->GetBinLowEdge(1)};
+    double y1{histogram->GetYaxis()->GetBinLowEdge(1)}; 
+
+    // Loop over the histogram elements
+    for (int y = 1; y < YRange+2; y++){ // Loop over each row I havent figured out yet why the plus 2, but it works ?!
+
+        // Create a Tline with current x1, y0 and new y.
+        if (y != 1 ) {
+            y1 = histogram->GetYaxis()->GetBinLowEdge(y);
+            TLine *l  = new TLine(x0, y0, x1, y1 );  vLine.push_back(l); // Add vertical Tline
+            y0 = y1;
+        }
+
+        for (int x = 1; x < XRange; x++){ // loop over each element in a row
+
+            if (histogram->GetBinContent(x,y) == 0){
+                x1 = histogram->GetXaxis()->GetBinLowEdge(x);
+                TLine *l2  = new TLine(x0, y0, x1, y1 );  vLine.push_back(l2); // Add horizontal TLine. 
+                x0 = x1;
+                break;
+            }
+
+        } // End loop over elements in a row
+    } // End loop over the rows
+
+    return vLine;
+
+}
+
+
+
 
 // Main Function
 void AnalyseNueKinematics() {
@@ -313,77 +356,81 @@ void AnalyseNueKinematics() {
     // 
     
     // Nue E vs Theta NuMI
-    std::vector<TLine*> vLine_Nue_E_vs_Theta;
+    std::vector<TLine*> vLine_Nue_E_vs_Theta{MakeTLineVector(hNue_E_vs_Theta_NuMI)};
 
-    TLine *l_theta_1  = new TLine(0., 18.0, 7.4, 18.0);     vLine_Nue_E_vs_Theta.push_back(l_theta_1);
-    //TLine *l_theta_2  = new TLine(6.67, 18.0, 6.67, 35.9);   vLine_Nue_E_vs_Theta.push_back(l_theta_2);
-    TLine *l_theta_3  = new TLine(2.1, 35.9, 7.4, 35.9);    vLine_Nue_E_vs_Theta.push_back(l_theta_3);
-    TLine *l_theta_4  = new TLine(2.1, 35.9, 2.1, 54.1);     vLine_Nue_E_vs_Theta.push_back(l_theta_4);
-    TLine *l_theta_5  = new TLine(1.1, 54.1, 2.1, 54.1);     vLine_Nue_E_vs_Theta.push_back(l_theta_5);
-    TLine *l_theta_6  = new TLine(1.1, 54.1, 1.1, 72.1);     vLine_Nue_E_vs_Theta.push_back(l_theta_6);
-    TLine *l_theta_7  = new TLine(0.53, 72.1, 1.1, 72.1);    vLine_Nue_E_vs_Theta.push_back(l_theta_7);
-    TLine *l_theta_8  = new TLine(0.53, 72.1, 0.53, 125.9);  vLine_Nue_E_vs_Theta.push_back(l_theta_8);
-    TLine *l_theta_9  = new TLine(0.0, 125.9, 0.53, 125.9);  vLine_Nue_E_vs_Theta.push_back(l_theta_9);
-    TLine *l_theta_10 = new TLine(7.4, 18.0, 8.0, 18.0);     vLine_Nue_E_vs_Theta.push_back(l_theta_10);
-    TLine *l_theta_11 = new TLine(8.0, 18.0, 8.0, 35.9);     vLine_Nue_E_vs_Theta.push_back(l_theta_11);
-    TLine *l_theta_12 = new TLine(7.4, 35.9, 8.0, 35.9);     vLine_Nue_E_vs_Theta.push_back(l_theta_12);
-    //TLine *l_theta_13 = new TLine(7.4,18.0, 7.4, 35.9);      vLine_Nue_E_vs_Theta.push_back(l_theta_13);
+    // TLine *l_theta_1  = new TLine(0., 18.0, 7.4, 18.0);     vLine_Nue_E_vs_Theta.push_back(l_theta_1);
+    // //TLine *l_theta_2  = new TLine(6.67, 18.0, 6.67, 35.9);   vLine_Nue_E_vs_Theta.push_back(l_theta_2);
+    // TLine *l_theta_3  = new TLine(2.1, 35.9, 7.4, 35.9);    vLine_Nue_E_vs_Theta.push_back(l_theta_3);
+    // TLine *l_theta_4  = new TLine(2.1, 35.9, 2.1, 54.1);     vLine_Nue_E_vs_Theta.push_back(l_theta_4);
+    // TLine *l_theta_5  = new TLine(1.1, 54.1, 2.1, 54.1);     vLine_Nue_E_vs_Theta.push_back(l_theta_5);
+    // TLine *l_theta_6  = new TLine(1.1, 54.1, 1.1, 72.1);     vLine_Nue_E_vs_Theta.push_back(l_theta_6);
+    // TLine *l_theta_7  = new TLine(0.53, 72.1, 1.1, 72.1);    vLine_Nue_E_vs_Theta.push_back(l_theta_7);
+    // TLine *l_theta_8  = new TLine(0.53, 72.1, 0.53, 125.9);  vLine_Nue_E_vs_Theta.push_back(l_theta_8);
+    // TLine *l_theta_9  = new TLine(0.0, 125.9, 0.53, 125.9);  vLine_Nue_E_vs_Theta.push_back(l_theta_9);
+    // TLine *l_theta_10 = new TLine(7.4, 18.0, 8.0, 18.0);     vLine_Nue_E_vs_Theta.push_back(l_theta_10);
+    // TLine *l_theta_11 = new TLine(8.0, 18.0, 8.0, 35.9);     vLine_Nue_E_vs_Theta.push_back(l_theta_11);
+    // TLine *l_theta_12 = new TLine(7.4, 35.9, 8.0, 35.9);     vLine_Nue_E_vs_Theta.push_back(l_theta_12);
+    // //TLine *l_theta_13 = new TLine(7.4,18.0, 7.4, 35.9);      vLine_Nue_E_vs_Theta.push_back(l_theta_13);
 
     // Nue E vs Phi NuMI
-    std::vector<TLine*> vLine_Nue_E_vs_Phi;
-    TLine *l_phi_1  = new TLine(0., 0., 8.0, 0.0);        vLine_Nue_E_vs_Phi.push_back(l_phi_1);
-    TLine *l_phi_2  = new TLine(8.0, 0.0, 8.0, 36.1);     vLine_Nue_E_vs_Phi.push_back(l_phi_2);
-    TLine *l_phi_3  = new TLine(1.0, 36.1, 8.0, 36.1);    vLine_Nue_E_vs_Phi.push_back(l_phi_3);
-    TLine *l_phi_4  = new TLine(1.0, 36.1, 1.0, 72.6);    vLine_Nue_E_vs_Phi.push_back(l_phi_4);
-    TLine *l_phi_5  = new TLine(0.0, 72.6, 1.0, 72.6);    vLine_Nue_E_vs_Phi.push_back(l_phi_5);
+    std::vector<TLine*> vLine_Nue_E_vs_Phi{MakeTLineVector(hNue_E_vs_Phi_NuMI)};
+    // TLine *l_phi_1  = new TLine(0., 0., 8.0, 0.0);        vLine_Nue_E_vs_Phi.push_back(l_phi_1);
+    // TLine *l_phi_2  = new TLine(8.0, 0.0, 8.0, 36.1);     vLine_Nue_E_vs_Phi.push_back(l_phi_2);
+    // TLine *l_phi_3  = new TLine(1.0, 36.1, 8.0, 36.1);    vLine_Nue_E_vs_Phi.push_back(l_phi_3);
+    // TLine *l_phi_4  = new TLine(1.0, 36.1, 1.0, 72.6);    vLine_Nue_E_vs_Phi.push_back(l_phi_4);
+    // TLine *l_phi_5  = new TLine(0.0, 72.6, 1.0, 72.6);    vLine_Nue_E_vs_Phi.push_back(l_phi_5);
 
     // El E vs Theta
-    std::vector<TLine*> vLine_El_E_vs_Theta;
+    std::vector<TLine*> vLine_El_E_vs_Theta{MakeTLineVector(helectron_E_vs_Theta_NuMI)};
 
-    TLine *l_el_theta_1  = new TLine(0, 0, 4, 0);               vLine_El_E_vs_Theta.push_back(l_el_theta_1);
-    TLine *l_el_theta_2  = new TLine(4, 0, 4 ,18);              vLine_El_E_vs_Theta.push_back(l_el_theta_2);
-    TLine *l_el_theta_3  = new TLine(4, 18, 5.5, 18);           vLine_El_E_vs_Theta.push_back(l_el_theta_3);
-    TLine *l_el_theta_4  = new TLine(5.5, 18, 6.0, 18.0);       vLine_El_E_vs_Theta.push_back(l_el_theta_4);
-    TLine *l_el_theta_5  = new TLine(6.0, 36, 3.5, 36.0);       vLine_El_E_vs_Theta.push_back(l_el_theta_5);
-    TLine *l_el_theta_6  = new TLine(3.5, 36.0, 3.5, 53.8);     vLine_El_E_vs_Theta.push_back(l_el_theta_6);
-    TLine *l_el_theta_7  = new TLine(3.5, 53.8, 2.0, 53.8);     vLine_El_E_vs_Theta.push_back(l_el_theta_7);
-    TLine *l_el_theta_8  = new TLine(2.0, 53.8, 2.0, 71.9);     vLine_El_E_vs_Theta.push_back(l_el_theta_8);
-    TLine *l_el_theta_9  = new TLine(2.0, 71.9, 1.5, 71.9);     vLine_El_E_vs_Theta.push_back(l_el_theta_9);
-    TLine *l_el_theta_10 = new TLine(1.5, 71.9, 1.5, 90.0);     vLine_El_E_vs_Theta.push_back(l_el_theta_10);
-    TLine *l_el_theta_11 = new TLine(1.5, 90.0, 1 ,90);         vLine_El_E_vs_Theta.push_back(l_el_theta_11);
-    TLine *l_el_theta_12 = new TLine(1, 90, 1, 126);            vLine_El_E_vs_Theta.push_back(l_el_theta_12);
-    TLine *l_el_theta_13 = new TLine(1, 126, 0.5, 126);         vLine_El_E_vs_Theta.push_back(l_el_theta_13);
-    TLine *l_el_theta_14 = new TLine(0.5, 126, 0.5, 180);       vLine_El_E_vs_Theta.push_back(l_el_theta_14);
-    TLine *l_el_theta_15 = new TLine(6.0, 18, 7, 18);           vLine_El_E_vs_Theta.push_back(l_el_theta_15);
-    TLine *l_el_theta_16 = new TLine(7, 18, 7, 36);             vLine_El_E_vs_Theta.push_back(l_el_theta_16);
-    TLine *l_el_theta_17 = new TLine(7, 36, 6, 36);             vLine_El_E_vs_Theta.push_back(l_el_theta_17);
-    //TLine *l_el_theta_18 = new TLine(6,36,6,18);                vLine_El_E_vs_Theta.push_back(l_el_theta_18);
+    // TLine *l_el_theta_1  = new TLine(0, 0, 4, 0);               vLine_El_E_vs_Theta.push_back(l_el_theta_1);
+    // TLine *l_el_theta_2  = new TLine(4, 0, 4 ,18);              vLine_El_E_vs_Theta.push_back(l_el_theta_2);
+    // TLine *l_el_theta_3  = new TLine(4, 18, 5.5, 18);           vLine_El_E_vs_Theta.push_back(l_el_theta_3);
+    // TLine *l_el_theta_4  = new TLine(5.5, 18, 6.0, 18.0);       vLine_El_E_vs_Theta.push_back(l_el_theta_4);
+    // TLine *l_el_theta_5  = new TLine(6.0, 36, 3.5, 36.0);       vLine_El_E_vs_Theta.push_back(l_el_theta_5);
+    // TLine *l_el_theta_6  = new TLine(3.5, 36.0, 3.5, 53.8);     vLine_El_E_vs_Theta.push_back(l_el_theta_6);
+    // TLine *l_el_theta_7  = new TLine(3.5, 53.8, 2.0, 53.8);     vLine_El_E_vs_Theta.push_back(l_el_theta_7);
+    // TLine *l_el_theta_8  = new TLine(2.0, 53.8, 2.0, 71.9);     vLine_El_E_vs_Theta.push_back(l_el_theta_8);
+    // TLine *l_el_theta_9  = new TLine(2.0, 71.9, 1.5, 71.9);     vLine_El_E_vs_Theta.push_back(l_el_theta_9);
+    // TLine *l_el_theta_10 = new TLine(1.5, 71.9, 1.5, 90.0);     vLine_El_E_vs_Theta.push_back(l_el_theta_10);
+    // TLine *l_el_theta_11 = new TLine(1.5, 90.0, 1 ,90);         vLine_El_E_vs_Theta.push_back(l_el_theta_11);
+    // TLine *l_el_theta_12 = new TLine(1, 90, 1, 126);            vLine_El_E_vs_Theta.push_back(l_el_theta_12);
+    // TLine *l_el_theta_13 = new TLine(1, 126, 0.5, 126);         vLine_El_E_vs_Theta.push_back(l_el_theta_13);
+    // TLine *l_el_theta_14 = new TLine(0.5, 126, 0.5, 180);       vLine_El_E_vs_Theta.push_back(l_el_theta_14);
+    // TLine *l_el_theta_15 = new TLine(6.0, 18, 7, 18);           vLine_El_E_vs_Theta.push_back(l_el_theta_15);
+    // TLine *l_el_theta_16 = new TLine(7, 18, 7, 36);             vLine_El_E_vs_Theta.push_back(l_el_theta_16);
+    // TLine *l_el_theta_17 = new TLine(7, 36, 6, 36);             vLine_El_E_vs_Theta.push_back(l_el_theta_17);
+    // //TLine *l_el_theta_18 = new TLine(6,36,6,18);                vLine_El_E_vs_Theta.push_back(l_el_theta_18);
 
     // El E vs Phi NuMI
-    std::vector<TLine*> vLine_El_E_vs_Phi;
-    TLine *l_el_phi_1  = new TLine(0, -180, 1.5, -180);         vLine_El_E_vs_Phi.push_back(l_el_phi_1);
-    TLine *l_el_phi_2  = new TLine(1.5, -180, 1.5 ,-144);       vLine_El_E_vs_Phi.push_back(l_el_phi_2);
-    TLine *l_el_phi_3  = new TLine(1.5, -144, 2.0, -144);       vLine_El_E_vs_Phi.push_back(l_el_phi_3);
-    TLine *l_el_phi_4  = new TLine(2.0, -144, 2.0, -108);       vLine_El_E_vs_Phi.push_back(l_el_phi_4);
-    TLine *l_el_phi_5  = new TLine(2.0, -108, 2.5, -108);       vLine_El_E_vs_Phi.push_back(l_el_phi_5);
-    TLine *l_el_phi_6  = new TLine(2.5, -108 , 2.5, -72);       vLine_El_E_vs_Phi.push_back(l_el_phi_6);
-    TLine *l_el_phi_7  = new TLine(2.5, -72, 3.0, -72);         vLine_El_E_vs_Phi.push_back(l_el_phi_7);
-    TLine *l_el_phi_8  = new TLine(3.0, -72, 3.0, -36);         vLine_El_E_vs_Phi.push_back(l_el_phi_8);
-    TLine *l_el_phi_9  = new TLine(3.0, -36, 5.5, -36);         vLine_El_E_vs_Phi.push_back(l_el_phi_9);
-    TLine *l_el_phi_10  = new TLine(5.5, -36, 5.5, 0);          vLine_El_E_vs_Phi.push_back(l_el_phi_10);
-    TLine *l_el_phi_11  = new TLine(5.5, 0, 6.0, 0);            vLine_El_E_vs_Phi.push_back(l_el_phi_11);
-    //TLine *l_el_phi_12  = new TLine(5.0, 0, 5.0, 36);           vLine_El_E_vs_Phi.push_back(l_el_phi_12);
-    TLine *l_el_phi_13  = new TLine(6.0, 36, 3.0, 36);          vLine_El_E_vs_Phi.push_back(l_el_phi_13);
-    TLine *l_el_phi_14  = new TLine(3.0, 36, 3.0, 72);          vLine_El_E_vs_Phi.push_back(l_el_phi_14);
-    TLine *l_el_phi_15  = new TLine(3.0, 72, 2.0, 72);          vLine_El_E_vs_Phi.push_back(l_el_phi_15);
-    TLine *l_el_phi_16  = new TLine(2.0, 72, 2.0, 108);         vLine_El_E_vs_Phi.push_back(l_el_phi_16);
-    TLine *l_el_phi_17  = new TLine(2.0, 108, 1.5, 108);        vLine_El_E_vs_Phi.push_back(l_el_phi_17);
-    TLine *l_el_phi_18  = new TLine(1.5, 108, 1.5, 180);        vLine_El_E_vs_Phi.push_back(l_el_phi_18);
-    TLine *l_el_phi_19  = new TLine(6, 0, 7, 0);                vLine_El_E_vs_Phi.push_back(l_el_phi_19);
-    TLine *l_el_phi_20  = new TLine(6, 36, 7, 36);              vLine_El_E_vs_Phi.push_back(l_el_phi_20);
-    //TLine *l_el_phi_21  = new TLine(6, 0, 6, 36);               vLine_El_E_vs_Phi.push_back(l_el_phi_21);
-    TLine *l_el_phi_22  = new TLine(7, 0, 7, 36);               vLine_El_E_vs_Phi.push_back(l_el_phi_22);
+    std::vector<TLine*> vLine_El_E_vs_Phi{MakeTLineVector(helectron_E_vs_Phi_NuMI)};
+    // TLine *l_el_phi_1  = new TLine(0, -180, 1.5, -180);         vLine_El_E_vs_Phi.push_back(l_el_phi_1);
+    // TLine *l_el_phi_2  = new TLine(1.5, -180, 1.5 ,-144);       vLine_El_E_vs_Phi.push_back(l_el_phi_2);
+    // TLine *l_el_phi_3  = new TLine(1.5, -144, 2.0, -144);       vLine_El_E_vs_Phi.push_back(l_el_phi_3);
+    // TLine *l_el_phi_4  = new TLine(2.0, -144, 2.0, -108);       vLine_El_E_vs_Phi.push_back(l_el_phi_4);
+    // TLine *l_el_phi_5  = new TLine(2.0, -108, 2.5, -108);       vLine_El_E_vs_Phi.push_back(l_el_phi_5);
+    // TLine *l_el_phi_6  = new TLine(2.5, -108 , 2.5, -72);       vLine_El_E_vs_Phi.push_back(l_el_phi_6);
+    // TLine *l_el_phi_7  = new TLine(2.5, -72, 3.0, -72);         vLine_El_E_vs_Phi.push_back(l_el_phi_7);
+    // TLine *l_el_phi_8  = new TLine(3.0, -72, 3.0, -36);         vLine_El_E_vs_Phi.push_back(l_el_phi_8);
+    // TLine *l_el_phi_9  = new TLine(3.0, -36, 5.5, -36);         vLine_El_E_vs_Phi.push_back(l_el_phi_9);
+    // TLine *l_el_phi_10  = new TLine(5.5, -36, 5.5, 0);          vLine_El_E_vs_Phi.push_back(l_el_phi_10);
+    // TLine *l_el_phi_11  = new TLine(5.5, 0, 6.0, 0);            vLine_El_E_vs_Phi.push_back(l_el_phi_11);
+    // //TLine *l_el_phi_12  = new TLine(5.0, 0, 5.0, 36);           vLine_El_E_vs_Phi.push_back(l_el_phi_12);
+    // TLine *l_el_phi_13  = new TLine(6.0, 36, 3.0, 36);          vLine_El_E_vs_Phi.push_back(l_el_phi_13);
+    // TLine *l_el_phi_14  = new TLine(3.0, 36, 3.0, 72);          vLine_El_E_vs_Phi.push_back(l_el_phi_14);
+    // TLine *l_el_phi_15  = new TLine(3.0, 72, 2.0, 72);          vLine_El_E_vs_Phi.push_back(l_el_phi_15);
+    // TLine *l_el_phi_16  = new TLine(2.0, 72, 2.0, 108);         vLine_El_E_vs_Phi.push_back(l_el_phi_16);
+    // TLine *l_el_phi_17  = new TLine(2.0, 108, 1.5, 108);        vLine_El_E_vs_Phi.push_back(l_el_phi_17);
+    // TLine *l_el_phi_18  = new TLine(1.5, 108, 1.5, 180);        vLine_El_E_vs_Phi.push_back(l_el_phi_18);
+    // TLine *l_el_phi_19  = new TLine(6, 0, 7, 0);                vLine_El_E_vs_Phi.push_back(l_el_phi_19);
+    // TLine *l_el_phi_20  = new TLine(6, 36, 7, 36);              vLine_El_E_vs_Phi.push_back(l_el_phi_20);
+    // //TLine *l_el_phi_21  = new TLine(6, 0, 6, 36);               vLine_El_E_vs_Phi.push_back(l_el_phi_21);
+    // TLine *l_el_phi_22  = new TLine(7, 0, 7, 36);               vLine_El_E_vs_Phi.push_back(l_el_phi_22);
 
+
+    // BNB 
+    // Electron E vs Phi
+    std::vector<TLine*> vLine_El_E_vs_Phi_BNB = MakeTLineVector(helectron_E_vs_Phi);
 
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -436,6 +483,8 @@ void AnalyseNueKinematics() {
 
     Plot2DHistSAME(helectron_E_vs_Theta , helectron_E_vs_Theta_NuMI, "plots/El_Energy_vs_Theta_Overlaid.eps", vLine_El_E_vs_Theta, scalefactor );
     Plot2DHistSAME(helectron_E_vs_Phi , helectron_E_vs_Phi_NuMI, "plots/El_Energy_vs_Phi_Overlaid.eps", vLine_El_E_vs_Phi,         scalefactor );
+
+    Plot2DHistSAME(helectron_E_vs_Phi , helectron_E_vs_Phi_NuMI, "plots/El_Energy_vs_Phi_test.eps", vLine_El_E_vs_Phi_BNB,         scalefactor );
 
     std::cout <<" ++++++++++++++++====================+++++++++++++++++++++++++++++++ \n" << std::endl;
     std::cout <<"BNB Events:\t" << BNB_Counter << "\tNuMI Events:\t" << NuMI_Counter << std::endl;
