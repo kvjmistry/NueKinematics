@@ -256,9 +256,9 @@ void AnalyseNueKinematics() {
 	TTreeReader myReader("microboonewvtof/EventTree", fileIN);
 
 	TTreeReaderValue<int>    PDGRV(myReader, "PDG"); 					// Load in the PDG variable
-	TTreeReaderValue<double> NueEnergyRV(myReader, "NueEnergy"); 	// Load in the NueEnergy variable
-    TTreeReaderValue<double> NueThetaRV(myReader, "NueTheta"); 	    // Load in the NueTheta variable
-    TTreeReaderValue<double> NuePhiRV(myReader, "NuePhi"); 	        // Load in the NuePhi variable
+	TTreeReaderValue<double> NueEnergyRV(myReader, "NueEnergy"); 	    // Load in the NueEnergy variable
+    TTreeReaderValue<double> NueThetaRV(myReader, "NueTheta"); 	        // Load in the NueTheta variable
+    TTreeReaderValue<double> NuePhiRV(myReader, "NuePhi"); 	            // Load in the NuePhi variable
 
     TTreeReaderValue<double> ElectronEnergyRV(myReader, "ElectronEnergy"); 	// Load in the ElectronEnergy variable
     TTreeReaderValue<double> ElectronThetaRV(myReader, "ElectronTheta"); 	// Load in the ElectronTheta variable
@@ -357,37 +357,6 @@ void AnalyseNueKinematics() {
 	}
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    //                                        Define the lines for coltons numi phase space
-    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    
-    
-    // +++++++++++++++++++
-    // ++++++ BNB +++++++
-    // +++++++++++++++++++
-    
-    
-    
-    // Electron E vs Phi
-    //std::vector<TLine*> vLine_El_E_vs_Phi_BNB = MakeTLineVector(helectron_E_vs_Phi);
-
-    // +++++++++++++++++++
-    // ++++++ NuMI +++++++
-    // +++++++++++++++++++
-    // Nue E vs Theta NuMI
-    //std::vector<TLine*> vLine_Nue_E_vs_Theta{MakeTLineVector(hNue_E_vs_Theta_NuMI)};
-
-    // Nue E vs Phi NuMI
-    //std::vector<TLine*> vLine_Nue_E_vs_Phi{MakeTLineVector(hNue_E_vs_Phi_NuMI)};
-    
-    // El E vs Theta
-    //std::vector<TLine*> vLine_El_E_vs_Theta{MakeTLineVector(helectron_E_vs_Theta_NuMI)};
-
-    // El E vs Phi NuMI
-    //std::vector<TLine*> vLine_El_E_vs_Phi{MakeTLineVector(helectron_E_vs_Phi_NuMI)};
-
-
-
-    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     //                                                  Make Histograms
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Define a scale factor to normalise histograms
@@ -402,30 +371,30 @@ void AnalyseNueKinematics() {
     // Nue BNB Only
     //Plot3DHist(hNue_E_vs_Theta_vs_Phi, "plots/BNB/Nue_Energy_vs_Theta_vs_Phi.png", "LEGO2", scalefactor);
 
-    Plot2DHist(hNue_E_vs_Theta, "plots/BNB/Nue_Energy_vs_Theta.png", "COLZ,TEXT00", scalefactor );
-    Plot2DHist(hNue_E_vs_Phi,   "plots/BNB/Nue_Energy_vs_Phi.png",   "COLZ,TEXT00", scalefactor );
+    Plot2DHist(hNue_E_vs_Theta,    "plots/BNB/Nue_Energy_vs_Theta.png",              "COLZ,TEXT00", scalefactor );
+    Plot2DHist(hNue_E_vs_Phi,      "plots/BNB/Nue_Energy_vs_Phi.png",                "COLZ,TEXT00", scalefactor );
     Plot2DHist(hNue_E_vs_Theta_EB, "plots/BNB/Nue_Energy_vs_Theta_Even_Binning.png", "COLZ,TEXT00", scalefactor );
     Plot2DHist(hNue_E_vs_Phi_EB,   "plots/BNB/Nue_Energy_vs_Phi_Even_Binning.png",   "COLZ,TEXT00", scalefactor );
 
-    Plot1DHist(hNue_Energy,     "plots/BNB/Nue_Energy.png",          "HIST",        scalefactor );
-    Plot1DHist(hNue_Theta,      "plots/BNB/Nue_Theta.png",           "HIST",        scalefactor ); 
-    Plot1DHist(hNue_Phi,        "plots/BNB/Nue_Phi.png",             "HIST",        scalefactor );
+    Plot1DHist(hNue_Energy, "plots/BNB/Nue_Energy.png", "HIST", scalefactor );
+    Plot1DHist(hNue_Theta,  "plots/BNB/Nue_Theta.png",  "HIST", scalefactor ); 
+    Plot1DHist(hNue_Phi,    "plots/BNB/Nue_Phi.png",    "HIST", scalefactor );
 
     // NuMi Nue
-    Plot2DHist(hNue_E_vs_Theta_NuMI, "plots/NuMI/Nue_Energy_vs_Theta_NuMI.png", "COLZ, TEXT00",     scalefactor );
-    Plot2DHist(hNue_E_vs_Phi_NuMI, "plots/NuMI/Nue_Energy_vs_Phi_NuMI.png", "COLZ, TEXT00",         scalefactor );
+    Plot2DHist(hNue_E_vs_Theta_NuMI, "plots/NuMI/Nue_Energy_vs_Theta_NuMI.png", "COLZ, TEXT00", scalefactor );
+    Plot2DHist(hNue_E_vs_Phi_NuMI, "plots/NuMI/Nue_Energy_vs_Phi_NuMI.png", "COLZ, TEXT00",     scalefactor );
 
     // Electron BNB Only
-    Plot3DHist(helectron_E_vs_Theta_vs_Phi, "plots/BNB/El_Energy_vs_Theta_vs_Phi.png", "LEGO2",     scalefactor );
+    Plot3DHist(helectron_E_vs_Theta_vs_Phi, "plots/BNB/El_Energy_vs_Theta_vs_Phi.png", "LEGO2",  scalefactor );
 
-    Plot2DHist(helectron_E_vs_Theta,"plots/BNB/El_Energy_vs_Theta.png", "COLZ,TEXT00", scalefactor );
-    Plot2DHist(helectron_E_vs_Phi,  "plots/BNB/El_Energy_vs_Phi.png",   "COLZ,TEXT00", scalefactor );
+    Plot2DHist(helectron_E_vs_Theta,   "plots/BNB/El_Energy_vs_Theta.png",              "COLZ,TEXT00", scalefactor );
+    Plot2DHist(helectron_E_vs_Phi,     "plots/BNB/El_Energy_vs_Phi.png",                "COLZ,TEXT00", scalefactor );
     Plot2DHist(helectron_E_vs_Theta_EB,"plots/BNB/El_Energy_vs_Theta_Even_Binning.png", "COLZ,TEXT00", scalefactor );
     Plot2DHist(helectron_E_vs_Phi_EB,  "plots/BNB/El_Energy_vs_Phi_Even_Binning.png",   "COLZ,TEXT00", scalefactor );
 
-    Plot1DHist(helectron_Energy,    "plots/BNB/El_Energy.png",          "HIST",        scalefactor );
-    Plot1DHist(helectron_Theta,     "plots/BNB/El_Theta.png",           "HIST",        scalefactor ); 
-    Plot1DHist(helectron_Phi,       "plots/BNB/El_Phi.png",             "HIST",        scalefactor );
+    Plot1DHist(helectron_Energy, "plots/BNB/El_Energy.png", "HIST", scalefactor );
+    Plot1DHist(helectron_Theta,  "plots/BNB/El_Theta.png",  "HIST", scalefactor ); 
+    Plot1DHist(helectron_Phi,    "plots/BNB/El_Phi.png",    "HIST", scalefactor );
 
      // NuMi Electron
     Plot2DHist(helectron_E_vs_Theta_NuMI, "plots/NuMI/El_Energy_vs_Theta_NuMI.png", "COLZ, TEXT00", scalefactor );
@@ -434,18 +403,18 @@ void AnalyseNueKinematics() {
     // BNB and NuMI Plots for Nue (Superimposed)
     
     // NuMI on BNB
-    Plot2DHistSAME(hNue_E_vs_Theta , hNue_E_vs_Theta_NuMI, "plots/BNB/Nue_Energy_vs_Theta_Overlaid.eps" , scalefactor, "NuMI");
-    Plot2DHistSAME(hNue_E_vs_Phi , hNue_E_vs_Phi_NuMI, "plots/BNB/Nue_Energy_vs_Phi_Overlaid.eps",         scalefactor, "NuMI" );
+    Plot2DHistSAME(hNue_E_vs_Theta, hNue_E_vs_Theta_NuMI, "plots/BNB/Nue_Energy_vs_Theta_Overlaid.eps", scalefactor, "NuMI");
+    Plot2DHistSAME(hNue_E_vs_Phi,   hNue_E_vs_Phi_NuMI,    "plots/BNB/Nue_Energy_vs_Phi_Overlaid.eps",  scalefactor, "NuMI" );
 
-    Plot2DHistSAME(helectron_E_vs_Theta , helectron_E_vs_Theta_NuMI, "plots/BNB/El_Energy_vs_Theta_Overlaid.eps", scalefactor, "NuMI" );
-    Plot2DHistSAME(helectron_E_vs_Phi , helectron_E_vs_Phi_NuMI, "plots/BNB/El_Energy_vs_Phi_Overlaid.eps",         scalefactor, "NuMI" );
+    Plot2DHistSAME(helectron_E_vs_Theta, helectron_E_vs_Theta_NuMI, "plots/BNB/El_Energy_vs_Theta_Overlaid.eps", scalefactor, "NuMI" );
+    Plot2DHistSAME(helectron_E_vs_Phi,   helectron_E_vs_Phi_NuMI,    "plots/BNB/El_Energy_vs_Phi_Overlaid.eps",  scalefactor, "NuMI" );
 
     // BNB on NuMI
-    Plot2DHistSAME( hNue_E_vs_Theta_NuMI, hNue_E_vs_Theta, "plots/NuMI/Nue_Energy_vs_Theta_Overlaid.eps" , scalefactor, "BNB");
-    Plot2DHistSAME( hNue_E_vs_Phi_NuMI, hNue_E_vs_Phi, "plots/NuMI/Nue_Energy_vs_Phi_Overlaid.eps",         scalefactor, "BNB" );
+    Plot2DHistSAME( hNue_E_vs_Theta_NuMI, hNue_E_vs_Theta, "plots/NuMI/Nue_Energy_vs_Theta_Overlaid.eps", scalefactor, "BNB");
+    Plot2DHistSAME( hNue_E_vs_Phi_NuMI,   hNue_E_vs_Phi,    "plots/NuMI/Nue_Energy_vs_Phi_Overlaid.eps",  scalefactor, "BNB" );
 
     Plot2DHistSAME( helectron_E_vs_Theta_NuMI, helectron_E_vs_Theta, "plots/NuMI/El_Energy_vs_Theta_Overlaid.eps", scalefactor, "BNB" );
-    Plot2DHistSAME( helectron_E_vs_Phi_NuMI, helectron_E_vs_Phi, "plots/NuMI/El_Energy_vs_Phi_Overlaid.eps",         scalefactor, "BNB" );
+    Plot2DHistSAME( helectron_E_vs_Phi_NuMI,   helectron_E_vs_Phi,   "plots/NuMI/El_Energy_vs_Phi_Overlaid.eps",   scalefactor, "BNB" );
 
     std::cout <<" ++++++++++++++++====================+++++++++++++++++++++++++++++++ \n" << std::endl;
     std::cout <<"BNB Events:\t" << BNB_Counter << "\tNuMI Events:\t" << NuMI_Counter << std::endl;
