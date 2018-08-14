@@ -157,11 +157,11 @@ void AnalyseNueKinematics() {
     // Nue All BNB
     TH3D*   hNue_E_vs_Theta_vs_Phi = new TH3D("Nue_E_vs_Theta_vs_Phi_All","Nue_E_vs_Theta_vs_Phi_All; Energy [GeV]; Theta [degrees]; Phi [degrees]", 20., 0., 10. , 10., 0., 180, 10., -180., 180 );
 
-     TH2D*   hNue_E_vs_Theta = new TH2D("Nue_E_vs_Theta_All","Nue_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",binnum_ETheta_Nue ,bins_ETheta_Nue, binnum_Theta_Nue ,bins_Theta_Nue);  // Fixed Vals 15., 0., 10. , 10., 0., 180
-     TH2D*   hNue_E_vs_Phi   = new TH2D("Nue_E_vs_Phi_All","Nue_E_vs_Phi_All; Energy [GeV]; Phi [degrees]", binnum_EPhi_Nue, bins_EPhi_Nue , binnum_Phi_Nue, bins_Phi_Nue); // Fixed Values 10., 0., 10. , 10., -180., 180
-    // TH2D*   hNue_E_vs_Theta = new TH2D("Nue_E_vs_Theta_All","Nue_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",15., 0., 10. , 10., 0., 180);  // Fixed Vals 15., 0., 10. , 10., 0., 180
-    // TH2D*   hNue_E_vs_Phi   = new TH2D("Nue_E_vs_Phi_All","Nue_E_vs_Phi_All; Energy [GeV]; Phi [degrees]", 10., 0., 10. , 10., -180., 180); // Fixed Values 10., 0., 10. , 10., -180., 180
-
+    TH2D*   hNue_E_vs_Theta = new TH2D("Nue_E_vs_Theta_All","Nue_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",15., 0., 10. , 10., 0., 180);  // Fixed Vals 15., 0., 10. , 10., 0., 180
+    TH2D*   hNue_E_vs_Phi   = new TH2D("Nue_E_vs_Phi_All","Nue_E_vs_Phi_All; Energy [GeV]; Phi [degrees]", 10., 0., 10. , 10., -180., 180); // Fixed Values 10., 0., 10. , 10., -180., 180
+    TH2D*   hNue_E_vs_Theta_EB = new TH2D("Nue_E_vs_Theta_All_EB","Nue_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",binnum_ETheta_Nue ,bins_ETheta_Nue, binnum_Theta_Nue ,bins_Theta_Nue);  // Even binned histograms
+    TH2D*   hNue_E_vs_Phi_EB    = new TH2D("Nue_E_vs_Phi_All_EB","Nue_E_vs_Phi_All; Energy [GeV]; Phi [degrees]", binnum_EPhi_Nue, bins_EPhi_Nue , binnum_Phi_Nue, bins_Phi_Nue); // Even binned histograms
+    
     TH1D* 	hNue_Energy = new TH1D("Nue_Energy_All","Nue_Energy_All; E [GeV]; Events",50., 0., 5);
     TH1D* 	hNue_Theta =  new TH1D("Nue_Theta_All","Nue_Theta_All; Theta [Degrees]; Events", 100., 0., 1);
     TH1D* 	hNue_Phi =    new TH1D("Nue_Phi_All","Nue_Phi_All; Phi [Degrees]; Events", 10., -180., 180);
@@ -170,11 +170,10 @@ void AnalyseNueKinematics() {
     // Electron all BNB
     TH3D*   helectron_E_vs_Theta_vs_Phi = new TH3D("electron_E_vs_Theta_vs_Phi_All","electron_E_vs_Theta_vs_Phi_All; Energy [GeV]; Theta [degrees]; Phi [degrees]", 20., 0., 10. , 10., 0., 180, 10., -180., 180 );
 
-    //TH2D*   helectron_E_vs_Theta = new TH2D("electron_E_vs_Theta_All","electron_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",20., 0., 10. , 10., 0., 180);
-    //TH2D*   helectron_E_vs_Phi   = new TH2D("electron_E_vs_Phi_All","electron_E_vs_Phi_All; Energy [GeV]; Phi [degrees]",20., 0., 10. , 10., -180., 180  ); // Fixed Values 20., 0., 10. , 10., -180., 180
-    TH2D*   helectron_E_vs_Theta = new TH2D("electron_E_vs_Theta_All","electron_E_vs_Theta_All; Energy [GeV]; Theta [degrees]", binnum_ETheta_El, bins_ETheta_El, binnum_Theta_El, bins_Theta_El );  // Fixed Values 20., 0., 10. , 10., 0., 180
-    TH2D*   helectron_E_vs_Phi   = new TH2D("electron_E_vs_Phi_All","electron_E_vs_Phi_All; Energy [GeV]; Phi [degrees]", binnum_EPhi_El,bins_EPhi_El, binnum_Phi_El, bins_Phi_El  );                // Fixed Values 20., 0., 10. , 10., -180., 180
-    
+    TH2D*   helectron_E_vs_Theta = new TH2D("electron_E_vs_Theta_All","electron_E_vs_Theta_All; Energy [GeV]; Theta [degrees]",20., 0., 10. , 10., 0., 180);
+    TH2D*   helectron_E_vs_Phi   = new TH2D("electron_E_vs_Phi_All","electron_E_vs_Phi_All; Energy [GeV]; Phi [degrees]",20., 0., 10. , 10., -180., 180  ); // Fixed Values 20., 0., 10. , 10., -180., 180
+    TH2D*   helectron_E_vs_Theta_EB = new TH2D("electron_E_vs_Theta_All_EB","electron_E_vs_Theta_All; Energy [GeV]; Theta [degrees]", binnum_ETheta_El, bins_ETheta_El, binnum_Theta_El, bins_Theta_El );  // Even binned histograms
+    TH2D*   helectron_E_vs_Phi_EB   = new TH2D("electron_E_vs_Phi_All_EB","electron_E_vs_Phi_All; Energy [GeV]; Phi [degrees]", binnum_EPhi_El,bins_EPhi_El, binnum_Phi_El, bins_Phi_El  );                // Even binned histograms
 
     TH1D* 	helectron_Energy = new TH1D("electron_Energy_All","electron_Energy_All; E [GeV]; Events",50., 0., 5.);
     TH1D* 	helectron_Theta  = new TH1D("electron_Theta_All","electron_Theta_All; Theta [Degrees]; Events", 10., 0., 180);
@@ -230,6 +229,9 @@ void AnalyseNueKinematics() {
         hNue_E_vs_Theta->Fill(*NueEnergyRV, *NueThetaRV );
         hNue_E_vs_Phi->Fill(*NueEnergyRV, *NuePhiRV);
 
+        hNue_E_vs_Theta_EB->Fill(*NueEnergyRV, *NueThetaRV ); // Also fill the even binned versions of the histograms. 
+        hNue_E_vs_Phi_EB->Fill(*NueEnergyRV, *NuePhiRV);
+
 		hNue_Energy->Fill(*NueEnergyRV); 
         hNue_Theta->Fill(*NueThetaRV); 
         hNue_Phi->Fill(*NuePhiRV); 
@@ -239,6 +241,9 @@ void AnalyseNueKinematics() {
 
         helectron_E_vs_Theta->Fill(*ElectronEnergyRV, *ElectronThetaRV );
         helectron_E_vs_Phi->Fill(*ElectronEnergyRV, *ElectronPhiRV);
+
+        helectron_E_vs_Theta_EB->Fill(*ElectronEnergyRV, *ElectronThetaRV ); // Also fill the even binned versions of the histograms. 
+        helectron_E_vs_Phi_EB->Fill(*ElectronEnergyRV, *ElectronPhiRV);
 
         helectron_Energy->Fill(*ElectronEnergyRV);
         helectron_Theta->Fill(*ElectronThetaRV);
@@ -310,9 +315,9 @@ void AnalyseNueKinematics() {
     // Nue E vs Theta NuMI
     std::vector<TLine*> vLine_Nue_E_vs_Theta;
 
-    TLine *l_theta_1  = new TLine(0., 18.0, 6.67, 18.0);     vLine_Nue_E_vs_Theta.push_back(l_theta_1);
-    TLine *l_theta_2  = new TLine(6.67, 18.0, 6.67, 35.9);   vLine_Nue_E_vs_Theta.push_back(l_theta_2);
-    TLine *l_theta_3  = new TLine(2.1, 35.9, 6.67, 35.9);    vLine_Nue_E_vs_Theta.push_back(l_theta_3);
+    TLine *l_theta_1  = new TLine(0., 18.0, 7.4, 18.0);     vLine_Nue_E_vs_Theta.push_back(l_theta_1);
+    //TLine *l_theta_2  = new TLine(6.67, 18.0, 6.67, 35.9);   vLine_Nue_E_vs_Theta.push_back(l_theta_2);
+    TLine *l_theta_3  = new TLine(2.1, 35.9, 7.4, 35.9);    vLine_Nue_E_vs_Theta.push_back(l_theta_3);
     TLine *l_theta_4  = new TLine(2.1, 35.9, 2.1, 54.1);     vLine_Nue_E_vs_Theta.push_back(l_theta_4);
     TLine *l_theta_5  = new TLine(1.1, 54.1, 2.1, 54.1);     vLine_Nue_E_vs_Theta.push_back(l_theta_5);
     TLine *l_theta_6  = new TLine(1.1, 54.1, 1.1, 72.1);     vLine_Nue_E_vs_Theta.push_back(l_theta_6);
@@ -322,7 +327,7 @@ void AnalyseNueKinematics() {
     TLine *l_theta_10 = new TLine(7.4, 18.0, 8.0, 18.0);     vLine_Nue_E_vs_Theta.push_back(l_theta_10);
     TLine *l_theta_11 = new TLine(8.0, 18.0, 8.0, 35.9);     vLine_Nue_E_vs_Theta.push_back(l_theta_11);
     TLine *l_theta_12 = new TLine(7.4, 35.9, 8.0, 35.9);     vLine_Nue_E_vs_Theta.push_back(l_theta_12);
-    TLine *l_theta_13 = new TLine(7.4,18.0, 7.4, 35.9);      vLine_Nue_E_vs_Theta.push_back(l_theta_13);
+    //TLine *l_theta_13 = new TLine(7.4,18.0, 7.4, 35.9);      vLine_Nue_E_vs_Theta.push_back(l_theta_13);
 
     // Nue E vs Phi NuMI
     std::vector<TLine*> vLine_Nue_E_vs_Phi;
@@ -338,8 +343,8 @@ void AnalyseNueKinematics() {
     TLine *l_el_theta_1  = new TLine(0, 0, 4, 0);               vLine_El_E_vs_Theta.push_back(l_el_theta_1);
     TLine *l_el_theta_2  = new TLine(4, 0, 4 ,18);              vLine_El_E_vs_Theta.push_back(l_el_theta_2);
     TLine *l_el_theta_3  = new TLine(4, 18, 5.5, 18);           vLine_El_E_vs_Theta.push_back(l_el_theta_3);
-    TLine *l_el_theta_4  = new TLine(5.5, 18, 5.5, 36.0);       vLine_El_E_vs_Theta.push_back(l_el_theta_4);
-    TLine *l_el_theta_5  = new TLine(5.5, 36, 3.5, 36.0);       vLine_El_E_vs_Theta.push_back(l_el_theta_5);
+    TLine *l_el_theta_4  = new TLine(5.5, 18, 6.0, 18.0);       vLine_El_E_vs_Theta.push_back(l_el_theta_4);
+    TLine *l_el_theta_5  = new TLine(6.0, 36, 3.5, 36.0);       vLine_El_E_vs_Theta.push_back(l_el_theta_5);
     TLine *l_el_theta_6  = new TLine(3.5, 36.0, 3.5, 53.8);     vLine_El_E_vs_Theta.push_back(l_el_theta_6);
     TLine *l_el_theta_7  = new TLine(3.5, 53.8, 2.0, 53.8);     vLine_El_E_vs_Theta.push_back(l_el_theta_7);
     TLine *l_el_theta_8  = new TLine(2.0, 53.8, 2.0, 71.9);     vLine_El_E_vs_Theta.push_back(l_el_theta_8);
@@ -352,7 +357,7 @@ void AnalyseNueKinematics() {
     TLine *l_el_theta_15 = new TLine(6.0, 18, 7, 18);           vLine_El_E_vs_Theta.push_back(l_el_theta_15);
     TLine *l_el_theta_16 = new TLine(7, 18, 7, 36);             vLine_El_E_vs_Theta.push_back(l_el_theta_16);
     TLine *l_el_theta_17 = new TLine(7, 36, 6, 36);             vLine_El_E_vs_Theta.push_back(l_el_theta_17);
-    TLine *l_el_theta_18 = new TLine(6,36,6,18);                vLine_El_E_vs_Theta.push_back(l_el_theta_18);
+    //TLine *l_el_theta_18 = new TLine(6,36,6,18);                vLine_El_E_vs_Theta.push_back(l_el_theta_18);
 
     // El E vs Phi NuMI
     std::vector<TLine*> vLine_El_E_vs_Phi;
@@ -366,9 +371,9 @@ void AnalyseNueKinematics() {
     TLine *l_el_phi_8  = new TLine(3.0, -72, 3.0, -36);         vLine_El_E_vs_Phi.push_back(l_el_phi_8);
     TLine *l_el_phi_9  = new TLine(3.0, -36, 5.5, -36);         vLine_El_E_vs_Phi.push_back(l_el_phi_9);
     TLine *l_el_phi_10  = new TLine(5.5, -36, 5.5, 0);          vLine_El_E_vs_Phi.push_back(l_el_phi_10);
-    TLine *l_el_phi_11  = new TLine(5.5, 0, 5.0, 0);            vLine_El_E_vs_Phi.push_back(l_el_phi_11);
-    TLine *l_el_phi_12  = new TLine(5.0, 0, 5.0, 36);           vLine_El_E_vs_Phi.push_back(l_el_phi_12);
-    TLine *l_el_phi_13  = new TLine(5.0, 36, 3.0, 36);          vLine_El_E_vs_Phi.push_back(l_el_phi_13);
+    TLine *l_el_phi_11  = new TLine(5.5, 0, 6.0, 0);            vLine_El_E_vs_Phi.push_back(l_el_phi_11);
+    //TLine *l_el_phi_12  = new TLine(5.0, 0, 5.0, 36);           vLine_El_E_vs_Phi.push_back(l_el_phi_12);
+    TLine *l_el_phi_13  = new TLine(6.0, 36, 3.0, 36);          vLine_El_E_vs_Phi.push_back(l_el_phi_13);
     TLine *l_el_phi_14  = new TLine(3.0, 36, 3.0, 72);          vLine_El_E_vs_Phi.push_back(l_el_phi_14);
     TLine *l_el_phi_15  = new TLine(3.0, 72, 2.0, 72);          vLine_El_E_vs_Phi.push_back(l_el_phi_15);
     TLine *l_el_phi_16  = new TLine(2.0, 72, 2.0, 108);         vLine_El_E_vs_Phi.push_back(l_el_phi_16);
@@ -376,7 +381,7 @@ void AnalyseNueKinematics() {
     TLine *l_el_phi_18  = new TLine(1.5, 108, 1.5, 180);        vLine_El_E_vs_Phi.push_back(l_el_phi_18);
     TLine *l_el_phi_19  = new TLine(6, 0, 7, 0);                vLine_El_E_vs_Phi.push_back(l_el_phi_19);
     TLine *l_el_phi_20  = new TLine(6, 36, 7, 36);              vLine_El_E_vs_Phi.push_back(l_el_phi_20);
-    TLine *l_el_phi_21  = new TLine(6, 0, 6, 36);               vLine_El_E_vs_Phi.push_back(l_el_phi_21);
+    //TLine *l_el_phi_21  = new TLine(6, 0, 6, 36);               vLine_El_E_vs_Phi.push_back(l_el_phi_21);
     TLine *l_el_phi_22  = new TLine(7, 0, 7, 36);               vLine_El_E_vs_Phi.push_back(l_el_phi_22);
 
 
@@ -398,6 +403,9 @@ void AnalyseNueKinematics() {
 
     Plot2DHist(hNue_E_vs_Theta, "plots/BNB/Nue_Energy_vs_Theta.png", "COLZ,TEXT00", scalefactor );
     Plot2DHist(hNue_E_vs_Phi,   "plots/BNB/Nue_Energy_vs_Phi.png",   "COLZ,TEXT00", scalefactor );
+    Plot2DHist(hNue_E_vs_Theta_EB, "plots/BNB/Nue_Energy_vs_Theta_Even_Binning.png", "COLZ,TEXT00", scalefactor );
+    Plot2DHist(hNue_E_vs_Phi_EB,   "plots/BNB/Nue_Energy_vs_Phi_Even_Binning.png",   "COLZ,TEXT00", scalefactor );
+
     Plot1DHist(hNue_Energy,     "plots/BNB/Nue_Energy.png",          "HIST",        scalefactor );
     Plot1DHist(hNue_Theta,      "plots/BNB/Nue_Theta.png",           "HIST",        scalefactor ); 
     Plot1DHist(hNue_Phi,        "plots/BNB/Nue_Phi.png",             "HIST",        scalefactor );
@@ -411,6 +419,9 @@ void AnalyseNueKinematics() {
 
     Plot2DHist(helectron_E_vs_Theta,"plots/BNB/El_Energy_vs_Theta.png", "COLZ,TEXT00", scalefactor );
     Plot2DHist(helectron_E_vs_Phi,  "plots/BNB/El_Energy_vs_Phi.png",   "COLZ,TEXT00", scalefactor );
+    Plot2DHist(helectron_E_vs_Theta_EB,"plots/BNB/El_Energy_vs_Theta_Even_Binning.png", "COLZ,TEXT00", scalefactor );
+    Plot2DHist(helectron_E_vs_Phi_EB,  "plots/BNB/El_Energy_vs_Phi_Even_Binning.png",   "COLZ,TEXT00", scalefactor );
+
     Plot1DHist(helectron_Energy,    "plots/BNB/El_Energy.png",          "HIST",        scalefactor );
     Plot1DHist(helectron_Theta,     "plots/BNB/El_Theta.png",           "HIST",        scalefactor ); 
     Plot1DHist(helectron_Phi,       "plots/BNB/El_Phi.png",             "HIST",        scalefactor );
@@ -420,11 +431,11 @@ void AnalyseNueKinematics() {
     Plot2DHist(helectron_E_vs_Phi_NuMI, "plots/NuMI/El_Energy_vs_Phi_NuMI.png", "COLZ, TEXT00",     scalefactor );
 
     // BNB and NuMI Plots for Nue (Superimposed)
-    Plot2DHistSAME(hNue_E_vs_Theta , hNue_E_vs_Theta_NuMI, "plots/Nue_Energy_vs_Theta_Overlaid.png", vLine_Nue_E_vs_Theta , scalefactor);
-    Plot2DHistSAME(hNue_E_vs_Phi , hNue_E_vs_Phi_NuMI, "plots/Nue_Energy_vs_Phi_Overlaid.png", vLine_Nue_E_vs_Phi,          scalefactor );
+    Plot2DHistSAME(hNue_E_vs_Theta , hNue_E_vs_Theta_NuMI, "plots/Nue_Energy_vs_Theta_Overlaid.eps", vLine_Nue_E_vs_Theta , scalefactor);
+    Plot2DHistSAME(hNue_E_vs_Phi , hNue_E_vs_Phi_NuMI, "plots/Nue_Energy_vs_Phi_Overlaid.eps", vLine_Nue_E_vs_Phi,          scalefactor );
 
     Plot2DHistSAME(helectron_E_vs_Theta , helectron_E_vs_Theta_NuMI, "plots/El_Energy_vs_Theta_Overlaid.eps", vLine_El_E_vs_Theta, scalefactor );
-    Plot2DHistSAME(helectron_E_vs_Phi , helectron_E_vs_Phi_NuMI, "plots/El_Energy_vs_Phi_Overlaid.png", vLine_El_E_vs_Phi,         scalefactor );
+    Plot2DHistSAME(helectron_E_vs_Phi , helectron_E_vs_Phi_NuMI, "plots/El_Energy_vs_Phi_Overlaid.eps", vLine_El_E_vs_Phi,         scalefactor );
 
     std::cout <<" ++++++++++++++++====================+++++++++++++++++++++++++++++++ \n" << std::endl;
     std::cout <<"BNB Events:\t" << BNB_Counter << "\tNuMI Events:\t" << NuMI_Counter << std::endl;

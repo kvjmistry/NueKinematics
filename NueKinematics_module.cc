@@ -301,7 +301,7 @@ void NueKinematics::analyze(art::Event const & e) {
     if ( NC_event >= 2 ) continue;// Skip fill for the second neutrino if NC
 
     if (mclist[iList]->Origin() == simb::kBeamNeutrino){ // Require a beam neutrino
-      //DEBUG: std::cout << "PDG:\t"<< particle.PdgCode()<< std::endl;
+      std::cout << "PDG:\t"<< particle.PdgCode()<< std::endl;
       
       // BEGIN SELECTING PARTICLE BLOCK
       if (particle.PdgCode() == 12){ // nue in the event
